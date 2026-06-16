@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사문 도표 마스터 클래스</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        body { 
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+            background-color: #f8fafc; 
+            color: #1e293b;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        ::-webkit-scrollbar { height: 6px; width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        @keyframes fade-in-up {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse-soft {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.02); opacity: 0.9; }
+        }
+        .animate-fade-in { animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-pulse-soft { animation: pulse-soft 2s infinite ease-in-out; }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        .table-input {
+            width: 100%; min-width: 45px; height: 45px; text-align: center; font-weight: 800; font-size: 1.1rem;
+            border: 2px solid transparent; border-radius: 8px; outline: none; transition: all 0.2s;
+            background-color: #f1f5f9; color: #334155;
+        }
+        .table-input:focus { border-color: #6366f1; background-color: #e0e7ff; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+        .table-input.correct { background-color: #dcfce7; color: #166534; border-color: #22c55e; }
+        .table-input.wrong { background-color: #fee2e2; color: #991b1b; border-color: #ef4444; }
+        .table-input.revealed { background-color: #fef08a; color: #854d0e; border-color: #eab308; }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fade-in-up 0.3s ease-out; }
+        
+        .venn-circle { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); mix-blend-mode: multiply; }
+
+        .math-fraction { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 4px; }
+        .math-fraction .num { border-bottom: 2px solid currentColor; padding: 0 4px; line-height: 1.2; }
+        .math-fraction .den { padding: 0 4px; line-height: 1.2; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const Fraction = ({ num, den, className = "" }) => (
+            <div className={`math-fraction font-black ${className}`}>
+                <span className="num">{num}</span>
+                <span className="den">{den}</span>
+            </div>
+        );
+
+        const FeedCard = ({ title, tag, icon, children, likes }) => (
+            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 mb-8 animate-fade-in hover:shadow-md transition-shadow relative overflow-hidden">
+                <div className="flex items-center gap-4 mb-5 pb-4 border-b border-slate-100">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center text-2xl shadow-inner border border-white">
+                        {icon}
+                    </div>
+                    <div className="flex-1">
+                        <span className="text-[10px] font-bold text-indigo-500 tracking-wider uppercase bg-indigo-50 px-2 py-1 rounded-md mb-1 inline-block">{tag}</span>
+                        <h3 className="font-bold text-xl text-slate-800 leading-tight">{title}</h3>
+                    </div>
+                    <div className="flex flex-col items-center justify-center text-slate-400 hover:text-rose-500 transition-colors cursor-pointer">
+                        <span className="text-xl">❤️</span>
+                        <span className="text-xs font-bold mt-1">{likes}</span>
+                    </div>
+                </div>
+                {children}
+            </div>
+        );
+
+        const LevelLearner = ({ levels }) => {
+            const [activeLevel, setActiveLevel] = useState(0);
+            return (
+                <div className="mt-5">
+                    <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
+                        {levels.map((lvl, idx) => (
+                            <button 
+                                key={idx} 
+                                onClick={() => setActiveLevel(idx)}
+                                className={`flex-shrink-0 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 border ${
+                                    activeLevel === idx 
+                                    ? 'bg-slate-800 text-white border-slate-800 shadow-md transform scale-105' 
+                                    : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
+                                }`}
+                            >
+                                {lvl.title}
+                            </button>
+                        ))}
+                    </div>
+                    <div className="bg-slate-50/80 rounded-2xl p-5 md:p-6 border border-slate-200 min-h-[160px] shadow-inner">
+                        {levels[activeLevel].content}
+                    </div>
+                </div>
+            );
+        };
+
+        function App() {
+            const [activeTab, setActiveTab] = useState('feed');
+
+            const navItems = [
+                { id: 'feed', icon: '📱', label: '핵심 피드' },
+                { id: 'solution', icon: '📝', label: '기출 분석' },
+                { id: 'sudoku', icon: '🧩', label: '스도쿠 훈련' },
+                { id: 'venn', icon: '⭕', label: '복지 시각화' },
+                { id: 'seesaw', icon: '⚖️', label: '시소 시뮬' }
+            ];
+
+            return (
+                <div className="min-h-screen bg-slate-50 pb-28 text-slate-800 font-sans">
+                    <header className="glass-panel sticky top-0 z-50 px-4 py-4 flex justify-center items-center">
+                        <div className="max-w-3xl w-full flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-gradient-to-tr from-indigo-600 to-blue-500 rounded-xl flex items-center justify-center text-white font-black text-2xl shadow-lg transform -rotate-3">S</div>
+                                <div>
+                                    <h1 className="font-black text-lg tracking-tight text-slate-800 leading-none">사문 1타.zip</h1>
+                                    <p className="text-[10px] text-slate-500 font-bold mt-1">2027 수능특강 완벽 대비</p>
+                                </div>
+                            </div>
+                            <div className="text-xs font-black bg-slate-800 text-yellow-300 px-4 py-2 rounded-full shadow-md animate-pulse-soft">
+                                Premium
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="max-w-3xl mx-auto px-4 mt-6">
+                        
+                        {/* 탭 1: 핵심 피드 */}
+                        <div className={`tab-content ${activeTab === 'feed' ? 'active' : ''}`}>
+                            <div className="mb-8 p-8 bg-gradient-to-br from-slate-800 via-indigo-900 to-blue-800 rounded-[2rem] text-white shadow-2xl relative overflow-hidden">
+                                <div className="absolute top-0 right-0 opacity-10 text-9xl -translate-y-4 translate-x-4 mix-blend-overlay">📈</div>
+                                <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-bold mb-4 inline-block backdrop-blur-sm border border-white/30">1등급 도약 플랜</span>
+                                <h2 className="text-3xl md:text-4xl font-black mb-3 relative z-10 leading-tight">수능 사문 도표,<br/>이제 <span className="text-yellow-300">수학</span>으로 뚫습니다.</h2>
+                                <p className="text-indigo-100 text-sm font-medium relative z-10 leading-relaxed mt-4 opacity-90">
+                                    발문의 의도 파악, 미지수 설정, 그리고 새롭게 추가된 '인구 부양비' 공식까지!<br/>
+                                    아래 피드들을 통해 핵심 무기를 장착하세요.
+                                </p>
+                            </div>
+
+                            {}
+                            <FeedCard title="인구 부양비와 노령화 지수 함정" tag="빈출 1위: 인구 구조" icon="👨‍👩‍👧‍👦" likes="28.9k">
+                                <p className="text-slate-600 font-medium mb-4 text-sm leading-relaxed">
+                                    "유소년 인구가 20% 감소하면 유소년 부양비도 20% 감소한다?" 절대 아닙니다! 분모인 '부양 인구'가 변했는지 확인해야 합니다.
+                                </p>
+                                <LevelLearner levels={[
+                                    {
+                                        title: "Lv.1 기준(분모) 잡기",
+                                        content: (
+                                            <div className="animate-fade-in text-slate-700 text-sm">
+                                                <p className="mb-3 font-bold text-rose-600">🚨 부양비의 분모는 '전체 인구'가 아닙니다!</p>
+                                                <ul className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                                    <li>• 유소년 부양비 = <Fraction num="유소년 인구" den={<span className="text-blue-600 font-bold">부양 인구(15~64)</span>} /> × 100</li>
+                                                    <li>• 노년 부양비 = <Fraction num="노년 인구" den={<span className="text-blue-600 font-bold">부양 인구(15~64)</span>} /> × 100</li>
+                                                    <li>• 총부양비 = 유소년 부양비 + 노년 부양비</li>
+                                                    <li className="pt-2 border-t font-bold text-indigo-700 mt-2">
+                                                        • 노령화 지수 = <Fraction num="노년 인구" den={<span className="text-emerald-600 font-bold">유소년 인구</span>} /> × 100
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        )
+                                    },
+                                    {
+                                        title: "Lv.2 기출 함정 파훼",
+                                        content: (
+                                            <div className="animate-fade-in text-slate-700 text-sm">
+                                                <p className="font-bold text-slate-800 mb-2">Q. 총부양비가 100이면?</p>
+                                                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100 font-bold text-indigo-700">
+                                                    식: <Fraction num="(유소년+노년)" den="부양 인구" /> × 100 = 100 <br/><br/>
+                                                    즉, <b>(유소년+노년) = 부양 인구</b> 라는 뜻입니다.<br/>
+                                                    이는 <b>전체 인구에서 부양 인구가 차지하는 비율이 정확히 50%</b>라는 엄청난 힌트가 됩니다!
+                                                </div>
+                                            </div>
+                                        )
+                                    },
+                                    {
+                                        title: "Lv.3 역추산 꿀팁 (비례식)",
+                                        content: (
+                                            <div className="animate-fade-in text-slate-700 text-sm">
+                                                <p className="font-bold text-indigo-700 mb-2">💡 분수 비례식으로 전체 인구수 맞추기</p>
+                                                <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm leading-relaxed">
+                                                    <p>노령화 지수가 50이면? 👉 노년 : 유소년 = 50 : 100 = <b className="text-rose-500">1 : 2</b></p>
+                                                    <p>노년 부양비가 20이면? 👉 노년 : 부양인구 = 20 : 100 = <b className="text-blue-500">1 : 5</b></p>
+                                                    <div className="my-2 border-t border-dashed border-slate-300"></div>
+                                                    <p>이 두 비례식의 교집합인 '노년(1)'을 연결하면?<br/>
+                                                    <b>유소년 : 부양인구 : 노년 = <span className="text-emerald-600 font-black text-lg">2 : 5 : 1</span></b> 이 됩니다!</p>
+                                                    <p className="mt-2 text-xs text-slate-500">이제 인구를 20a, 50a, 10a로 세팅하면 모든 문제가 다 풀립니다.</p>
+                                                </div>
+                                            </div>
+                                        )
+                                    }
+                                ]} />
+                            </FeedCard>
+
+                            {}
+                            <FeedCard title="A에 대한 B의 비율" tag="수학적 사고 기초" icon="🧮" likes="18.5k">
+                                <p className="text-slate-600 font-medium mb-4 text-sm leading-relaxed">
+                                    가장 기초적이면서 가장 많이 틀리는 수능 1번 함정입니다. 분모/분자 위치를 헷갈리면 끝장입니다.
+                                </p>
+                                <LevelLearner levels={[
+                                    {
+                                        title: "Lv.1 공식 암기",
+                                        content: (
+                                            <div className="animate-fade-in text-slate-700 text-sm">
+                                                <p className="mb-3"><b>'~에 대한', '대비'</b>가 붙은 쪽이 무조건 <b>기준(분모)</b>입니다.</p>
+                                                <div className="bg-slate-800 p-4 rounded-xl text-center text-white shadow-sm flex flex-col items-center">
+                                                    <span className="text-indigo-300 text-xs mb-2">A에 대한 B의 비율</span>
+                                                    <Fraction num="B (비교하는 값)" den="A (기준이 되는 값)" className="text-lg text-yellow-300" />
+                                                </div>
+                                            </div>
+                                        )
+                                    },
+                                    {
+                                        title: "Lv.2 기출 변형",
+                                        content: (
+                                            <div className="animate-fade-in text-slate-700 text-sm">
+                                                <p className="font-bold text-rose-600 mb-3">🚨 "자녀 세대 대비 부모 세대의 비율이 1 미만이다."</p>
+                                                <ul className="bg-white p-4 rounded-lg border border-slate-200 space-y-3">
+                                                    <li className="flex items-center gap-2">
+                                                        <span className="font-bold text-slate-500">1. 수식화:</span> 
+                                                        <Fraction num="부모 수" den="자녀 수" className="text-indigo-700" /> <span className="font-bold">&lt; 1</span>
+                                                    </li>
+                                                    <li className="flex items-center gap-2">
+                                                        <span className="font-bold text-slate-500">2. 변형:</span>
+                                                        <span className="font-bold bg-indigo-50 px-2 py-1 rounded">부모 수 &lt; 자녀 수</span> (양변에 자녀 수 곱하기)
+                                                    </li>
+                                                    <li className="pt-2 border-t font-black text-indigo-600">
+                                                        👉 결론: 자녀 세대의 인구가 부모보다 더 많다!
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        )
+                                    }
+                                ]} />
+                            </FeedCard>
+
+                            <FeedCard title="분수 꼴로 제시된 비율 비(比) 타파하기" tag="고난도 발문 팁" icon="➗" likes="15.2k">
+                                <p className="text-slate-600 font-medium mb-4 text-sm leading-relaxed">
+                                    [질문 폭주!] "분수 형태로 나오면 어떻게 시작하죠?" <br/>
+                                    분수를 가로 방정식으로 바꾸고 다중 미지수(a,b,c)를 도입하는 훈련이 필요합니다.
+                                </p>
+                                <LevelLearner levels={[
+                                    {
+                                        title: "Lv.1 분수 없애기",
+                                        content: (
+                                            <div className="animate-fade-in text-slate-700 text-sm">
+                                                <p className="mb-4">분수가 보이면 무조건 양변에 분모를 곱해서 <b>수평적인 비례식</b>으로 바꾸세요.</p>
+                                                <div className="bg-rose-50 p-4 rounded-xl border border-rose-100 font-bold text-rose-700 shadow-sm text-center flex flex-col items-center">
+                                                    <div className="flex items-center">
+                                                        <Fraction num="을국 상층 비율" den="갑국 상층 비율" /> = 2
+                                                    </div>
+                                                    <span className="text-xl my-2">👇</span>
+                                                    <span className="text-indigo-700">을국 상층 비율 = 갑국 상층 비율 × 2</span>
+                                                </div>
+                                            </div>
+                                        )
+                                    },
+                                    {
+                                        title: "Lv.2 다중 미지수(a, b, c) 도입",
+                                        content: (
+                                            <div className="animate-fade-in text-slate-700 text-sm space-y-3">
+                                                <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                                                    <p className="font-bold text-blue-600 mb-2">🚨 비율(%)은 같아도 인구수(명)는 다릅니다!</p>
+                                                    <p>갑, 을, 병국 세 나라를 비교할 때 '전체 인구가 같다'는 단서가 없다면 <b>반드시 각각 다른 미지수</b>를 써야 합니다.</p>
+                                                    <ul className="mt-3 space-y-1 bg-slate-50 p-3 rounded-lg text-indigo-700 font-bold border border-slate-100">
+                                                        <li>갑국 총인구 = <span className="text-blue-500">100a</span> 명</li>
+                                                        <li>을국 총인구 = <span className="text-rose-500">100b</span> 명</li>
+                                                        <li>병국 총인구 = <span className="text-emerald-500">100c</span> 명</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        )
+                                    },
+                                    {
+                                        title: "Lv.3 실전 결합 (절댓값 구하기)",
+                                        content: (
+                                            <div className="animate-fade-in text-slate-700 text-sm">
+                                                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                                                    <p className="font-black text-indigo-700 mb-2">💡 미지수와 비율의 콜라보</p>
+                                                    <p className="mb-2">Lv.1에서 구한 <b>'을국 상층 비율 = 갑국 상층 비율 × 2'</b>를 인구수로 바꿔볼까요?</p>
+                                                    <ul className="bg-white p-3 rounded-lg space-y-2 text-xs font-bold border border-indigo-100 leading-relaxed">
+                                                        <li>갑국 상층 비율을 <span className="text-rose-500">k%</span> 라고 가정하면, 을국 상층 비율은 <span className="text-rose-500">2k%</span></li>
+                                                        <li className="flex items-center">
+                                                            1. 갑국 상층 인구 = 100a × <Fraction num="k" den="100" /> = <span className="text-blue-600 ml-1 text-sm">ak 명</span>
+                                                        </li>
+                                                        <li className="flex items-center">
+                                                            2. 을국 상층 인구 = 100b × <Fraction num="2k" den="100" /> = <span className="text-blue-600 ml-1 text-sm">2bk 명</span>
+                                                        </li>
+                                                        <li className="mt-2 pt-2 border-t text-indigo-800 text-sm">
+                                                            👉 이제 a와 b의 관계(예: "을국 총인구가 갑국의 2배이다" → b=2a)만 알면 정확한 명수를 비교할 수 있습니다!
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        )
+                                    }
+                                ]} />
+                            </FeedCard>
+                        </div>
+
+                        {}
+                        <div className={`tab-content ${activeTab === 'solution' ? 'active' : ''}`}>
+                            <div className="mb-8 p-6 md:p-8 bg-white rounded-[2rem] border-2 border-indigo-100 shadow-sm relative overflow-hidden">
+                                <h2 className="text-2xl font-black mb-2 text-slate-800">수능 기출 유형 분석 & 첫 단추 꿰기</h2>
+                                <p className="text-slate-500 text-sm font-medium mb-6">수능특강과 평가원 모의고사 기출을 바탕으로, "어디서부터 손대야 할지 모르는" 문제를 타파합니다.</p>
+                                
+                                <div className="space-y-8">
+                                    <div className="bg-slate-50 rounded-2xl p-5 md:p-6 border border-slate-200">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <span className="bg-indigo-600 text-white text-xs font-bold px-2 py-1 rounded">유형 1</span>
+                                            <h3 className="font-bold text-lg text-slate-800">국가 간 계층 구조 비교 (상대비율 제시형)</h3>
+                                        </div>
+                                        <div className="bg-white p-4 rounded-xl border border-slate-200 mb-4 shadow-sm">
+                                            <p className="text-xs text-slate-400 font-bold mb-2">[발문 예시]</p>
+                                            <p className="text-sm font-medium text-slate-700 leading-relaxed">
+                                                표는 갑~병국의 계층 구성 비율을 나타낸다... <br/>
+                                                * 갑국의 상층 비율은 20%, 중층 50% / 을국 상층 10%, 중층 30%...<br/>
+                                                * <b>갑국의 하층 인구는 을국 하층 인구의 2배</b>이고...
+                                            </p>
+                                        </div>
+                                        <h4 className="font-bold text-indigo-700 text-sm mb-2">🚀 이렇게 시작하세요!</h4>
+                                        <ul className="space-y-3 text-sm text-slate-700 font-medium">
+                                            <li className="flex gap-2"><span className="text-blue-500">1️⃣</span> <span>표의 비율 퍼센트 옆에 <b>무조건 미지수 a, b, c를 곱해서 적어둡니다.</b><br/>(예: 갑국 상층 20a, 을국 상층 10b)</span></li>
+                                            <li className="flex gap-2"><span className="text-blue-500">2️⃣</span> <span>문제 하단의 <b>'명수(인구)'를 직접적으로 비교하는 조건문</b>을 찾습니다.</span></li>
+                                            <li className="flex gap-2"><span className="text-blue-500">3️⃣</span> <span>"갑국 하층 인구(30a) = 을국 하층 인구(60b) × 2" 식을 세웁니다. <br/>👉 30a = 120b 👉 <span className="bg-yellow-100 px-1 font-bold text-rose-600">a = 4b</span> 도출!</span></li>
+                                            <li className="flex gap-2"><span className="text-blue-500">4️⃣</span> <span>이제 갑국의 모든 수치에 a 대신 4b를 넣어 'b'로 대통합합니다. 끝!</span></li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="bg-slate-50 rounded-2xl p-5 md:p-6 border border-slate-200">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <span className="bg-rose-500 text-white text-xs font-bold px-2 py-1 rounded">유형 2</span>
+                                            <h3 className="font-bold text-lg text-slate-800">세대 간 계층 이동 (방향성 및 이동량 제시형)</h3>
+                                        </div>
+                                        <div className="bg-white p-4 rounded-xl border border-slate-200 mb-4 shadow-sm">
+                                            <p className="text-xs text-slate-400 font-bold mb-2">[발문 예시]</p>
+                                            <p className="text-sm font-medium text-slate-700 leading-relaxed">
+                                                * 부모 세대는 피라미드, 자녀 세대는 다이아몬드형 계층 구조이다.<br/>
+                                                * 상승 이동한 인구는 하강 이동한 인구의 2배이다.<br/>
+                                                * 부모 상층 → 자녀 중층 이동은 전체의 10%이다.
+                                            </p>
+                                        </div>
+                                        <h4 className="font-bold text-rose-700 text-sm mb-2">🚀 이렇게 시작하세요!</h4>
+                                        <ul className="space-y-3 text-sm text-slate-700 font-medium">
+                                            <li className="flex gap-2"><span className="text-rose-500">1️⃣</span> <span>백지상태에서 <b>무조건 3x3 스도쿠 표(가로 자녀, 세로 부모)</b>를 크게 그립니다.</span></li>
+                                            <li className="flex gap-2"><span className="text-rose-500">2️⃣</span> <span>외곽의 <b>합계(주변분포)</b> 칸부터 채웁니다. 비율이 명확하지 않다면 상, 중, 하 비율에 맞게 미지수나 부등호(상&lt;중&lt;하)를 적어둡니다.</span></li>
+                                            <li className="flex gap-2"><span className="text-rose-500">3️⃣</span> <span>문제 조건 중 <b>"~에서 ~로 이동은 %이다"와 같이 핀포인트로 알려주는 절대 단서</b>를 찾아 해당 칸(셀)에 숫자를 확정합니다.</span></li>
+                                            <li className="flex gap-2"><span className="text-rose-500">4️⃣</span> <span><b>[상승 이동=좌하단 3칸 합], [하강 이동=우상단 3칸 합]</b> 공식을 이용하여 연립방정식을 풉니다. 바로 다음 탭 '스도쿠 훈련'에서 실습해보세요!</span></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {}
+                        <div className={`tab-content ${activeTab === 'sudoku' ? 'active' : ''}`}>
+                            <SudokuApp />
+                        </div>
+
+                        <div className={`tab-content ${activeTab === 'venn' ? 'active' : ''}`}>
+                            <WelfareVennApp />
+                        </div>
+
+                        <div className={`tab-content ${activeTab === 'seesaw' ? 'active' : ''}`}>
+                            <SeesawApp />
+                        </div>
+
+                    </main>
+
+                    <nav className="fixed bottom-0 w-full glass-panel z-50 rounded-t-3xl border-t border-slate-200/50 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+                        <div className="max-w-3xl mx-auto px-1 md:px-4 py-2 pb-safe flex justify-between items-center">
+                            {navItems.map(item => (
+                                <button 
+                                    key={item.id}
+                                    onClick={() => setActiveTab(item.id)}
+                                    className={`relative flex flex-col items-center justify-center p-2 md:p-3 w-1/5 transition-all duration-300 ${
+                                        activeTab === item.id 
+                                        ? 'text-indigo-600' 
+                                        : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-2xl'
+                                    }`}
+                                >
+                                    <span className={`text-xl md:text-2xl mb-1 transition-transform duration-300 ${activeTab === item.id ? 'transform scale-110 -translate-y-1' : ''}`}>
+                                        {item.icon}
+                                    </span>
+                                    <span className={`text-[10px] md:text-[11px] font-black tracking-tight transition-all duration-300 whitespace-nowrap ${activeTab === item.id ? 'opacity-100 text-indigo-600' : 'opacity-80'}`}>
+                                        {item.label}
+                                    </span>
+                                    {activeTab === item.id && (
+                                        <div className="absolute top-0 w-8 h-1 bg-indigo-600 rounded-b-full"></div>
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+                    </nav>
+                </div>
+            );
+        }
+
+        // ==========================================
+        // 스도쿠 앱 컴포넌트 (5단계 난이도 및 힌트 로직 픽스)
+        // ==========================================
+        function SudokuApp() {
+            const [level, setLevel] = useState('Lv1. 기초');
+            const [hintsUsed, setHintsUsed] = useState(0);
+            const [showSolution, setShowSolution] = useState(false);
+
+            const puzzles = {
+                'Lv1. 기초': {
+                    desc: "가장 기본적인 덧셈/뺄셈 연습 (전체 100명)",
+                    conditions: ["부모: 상(20) 중(50) 하(30)", "자녀: 상(30) 중(40) 하(30)"],
+                    hints: ["상층 대물림은 10명, 하층 대물림은 20명이다.", "부모가 하층인데 자녀가 상층으로 이동한 사람은 5명이다.", "부모 상층 → 자녀 하층으로의 이동은 0명이다."],
+                    parents: { S: 20, M: 50, L: 30 }, children: { S: 30, M: 40, L: 30 },
+                    correct: { SS: '10', SM: '10', SL: '0', MS: '15', MM: '25', ML: '10', LS: '5', LM: '5', LL: '20' },
+                    solutionSteps: [
+                        "1. 대물림(대각선) 채우기: [상→상]=10, [하→하]=20",
+                        "2. 힌트2 적용: [하→상]=5. 힌트3 적용: [상→하]=0",
+                        "3. 가로빼기: 부모하(30) - 자녀상(5) - 자녀하(20) = [하→중]=5",
+                        "4. 가로빼기: 부모상(20) - 자녀상(10) - 자녀하(0) = [상→중]=10",
+                        "5. 세로빼기: 자녀상(30) - 부모상(10) - 부모하(5) = [중→상]=15",
+                        "6. 세로빼기: 자녀하(30) - 부모상(0) - 부모하(20) = [중→하]=10",
+                        "7. 정중앙 대물림: 부모중(50) - 자녀상(15) - 자녀하(10) = [중→중]=25"
+                    ]
+                },
+                'Lv2. 중급': {
+                    desc: "비례배분이 포함된 기출 변형 (전체 100명)",
+                    conditions: ["부모 세대 상:중:하 = 1:6:3", "자녀 세대 상:중:하 = 2:5:3"],
+                    hints: ["세대 간 하강 이동은 없다 (표 우상단 3칸이 모두 0)", "상층 대물림은 10명이다."],
+                    parents: { S: 10, M: 60, L: 30 }, children: { S: 20, M: 50, L: 30 },
+                    correct: { SS: '10', SM: '0', SL: '0', MS: '10', MM: '50', ML: '0', LS: '0', LM: '0', LL: '30' },
+                    solutionSteps: [
+                        "1. 비율 배분: 부모는 10, 60, 30명. 자녀는 20, 50, 30명.",
+                        "2. 하강 이동 없음 적용: [상→중]=0, [상→하]=0, [중→하]=0",
+                        "3. 힌트 적용: [상→상]=10. (부모 상층 총합 10과 일치!)",
+                        "4. 세로보기: 자녀 하층(30)을 채울 수 있는 곳은 오직 부모 하층뿐이므로 [하→하]=30",
+                        "5. 가로보기: 부모 하층(30)이 모두 대물림되었으므로 [하→상]=0, [하→중]=0",
+                        "6. 자녀 상층(20) 중 10명은 부모상에서 왔으므로 나머지 10명이 [중→상]=10",
+                        "7. 남은 부모 중층 대물림: 60 - 10 = 50. 세로합(0+50+0=50)과도 완벽 일치!"
+                    ]
+                },
+                'Lv3. 실전': {
+                    desc: "구조 형태 제시형 (전체 100명)",
+                    conditions: ["부모 세대는 피라미드형, 자녀 세대는 다이아몬드형이다.", "부모 상층은 20명, 자녀 하층은 20명이다."],
+                    hints: ["상층 대물림과 하층 대물림 인구는 각각 15명이다.", "세대 간 하강 이동 인구는 총 10명이다.", "부모 상층→자녀 하층, 부모 하층→자녀 상층 이동은 없다(0명)."],
+                    parents: { S: 20, M: 30, L: 50 }, children: { S: 20, M: 60, L: 20 },
+                    correct: { SS: '15', SM: '5', SL: '0', MS: '5', MM: '20', ML: '5', LS: '0', LM: '35', LL: '15' },
+                    solutionSteps: [
+                        "1. 구조 파악: 부모(피라미드) 하>중>상 이고 상=20 이므로 하(50),중(30) 설정. 자녀(다이아) 하=20 이므로 중(60),상(20) 설정.",
+                        "2. 힌트3 적용: [상→하]=0, [하→상]=0",
+                        "3. 힌트1 적용: [상→상]=15, [하→하]=15",
+                        "4. 가로빼기: 부모상(20) - [상→상](15) = [상→중](5)",
+                        "5. 세로빼기: 자녀하(20) - [하→하](15) - [상→하](0) = [중→하](5)",
+                        "6. 힌트2 적용(하강=10): [상→중]+[상→하]+[중→하] = 5+0+5=10. 일치!",
+                        "7. 세로빼기: 자녀상(20) - [상→상](15) - [하→상](0) = [중→상](5)",
+                        "8. 부모중(30) - [중→상](5) - [중→하](5) = [중→중](20)",
+                        "9. 부모하(50) - [하→상](0) - [하→하](15) = [하→중](35)"
+                    ]
+                },
+                'Lv4. 심화': {
+                    desc: "단서의 조합 추론형 (전체 100명)",
+                    conditions: ["부모 세대는 피라미드형이고, 상층과 중층의 인구가 같다.", "자녀 세대는 다이아몬드형이고, 상층과 하층의 인구가 같다."],
+                    hints: ["부모 세대 상층 인구와 자녀 세대 상층 인구는 동일하다.", "세대 간 하강 이동은 발생하지 않았다 (0명)."],
+                    parents: { S: 20, M: 20, L: 60 }, children: { S: 20, M: 60, L: 20 },
+                    correct: { SS: '20', SM: '0', SL: '0', MS: '0', MM: '20', ML: '0', LS: '0', LM: '40', LL: '20' },
+                    solutionSteps: [
+                        "1. 인구 방정식: 부모 상=중=x. x+x+y=100. 피라미드(y>x)이므로 x=20,y=60. (20/20/60).",
+                        "2. 인구 방정식: 자녀 상=하=z. 다이아(w>z)이므로 z=20,w=60. (20/60/20). 조건의 '부모상=자녀상'과도 일치함.",
+                        "3. 힌트2 적용: 하강이동=0 이므로 우상단 3칸 [상→중], [상→하], [중→하] 모두 0.",
+                        "4. 가로보기: 부모상(20)이 모두 대물림되어 [상→상]=20.",
+                        "5. 세로보기: 자녀상(20)이 모두 부모상에서 왔으므로 [중→상]=0, [하→상]=0.",
+                        "6. 부모중(20)에서 상(0),하(0)로 갔으므로 모두 대물림되어 [중→중]=20.",
+                        "7. 자녀하(20)에서 부모상(0),중(0)에서 온 게 없으므로 [하→하]=20.",
+                        "8. 부모하(60) 중 20명이 대물림했으므로 나머지는 [하→중]=40."
+                    ]
+                },
+                'Lv5. 킬러': {
+                    desc: "초고난도 상대비율 추론 (전체 100명)",
+                    conditions: ["부모 세대는 피라미드형, 자녀 세대는 다이아몬드형이다.", "부모 상층은 자녀 하층 인구와 동일하다."],
+                    hints: ["세대 간 하강 이동은 없다(0명).", "상층 대물림 인구는 하층 대물림 인구와 동일하다.", "부모 하층에서 자녀 상층으로 상승 이동한 사람은 10명이다."],
+                    parents: { S: 10, M: 30, L: 60 }, children: { S: 30, M: 60, L: 10 },
+                    correct: { SS: '10', SM: '0', SL: '0', MS: '10', MM: '20', ML: '0', LS: '10', LM: '40', LL: '10' },
+                    solutionSteps: [
+                        "1. 구조 단서 분석: 하강 이동=0 이므로 우상단 3칸 모두 0.",
+                        "2. 부모상=자녀하=x. 하강이동이 없으므로 자녀 하층은 오직 부모 하층에서만 옴. 즉 [하→하]=x.",
+                        "3. 상층 대물림=하층 대물림 이므로 [상→상]=x.",
+                        "4. 부모상 총합이 x인데 [상→상]=x 이면 부모상의 이동은 완벽 성립함.",
+                        "5. 힌트3 적용: [하→상]=10.",
+                        "6. 여기서 x=10으로 가정. (킬러 특성상 직관적 대입). 부모상=10, 자녀하=10. [하→하]=10.",
+                        "7. [하→상]=10. 부모하층을 60으로 설정해봄(피라미드). 그럼 [하→중]=60-10-10=40.",
+                        "8. 부모중을 30으로 설정해봄. 자녀상 총합을 맞추기 위해 [중→상]=10. 그럼 [중→중]=20. 자녀중=60(다이아). 완벽히 모든 조건 성립!"
+                    ]
+                }
+            };
+
+            const levelsArray = Object.keys(puzzles);
+            const currentPuzzle = puzzles[level];
+            const [answers, setAnswers] = useState({ SS: '', SM: '', SL: '', MS: '', MM: '', ML: '', LS: '', LM: '', LL: '' });
+
+            useEffect(() => { resetSudoku(); }, [level]);
+
+            const handleInputChange = (field, value) => {
+                if (/^\d*$/.test(value) && value.length <= 3) setAnswers(prev => ({ ...prev, [field]: value }));
+            };
+
+            const checkStatus = (field) => {
+                if (showSolution) return 'revealed';
+                if (answers[field] === '') return '';
+                return answers[field] === currentPuzzle.correct[field] ? 'correct' : 'wrong';
+            };
+
+            const isAllCorrect = Object.keys(currentPuzzle.correct).every(k => answers[k] === currentPuzzle.correct[k]);
+            const useHint = () => setHintsUsed(prev => Math.min(prev + 1, currentPuzzle.hints.length));
+            const triggerShowSolution = () => { setAnswers(currentPuzzle.correct); setShowSolution(true); };
+            const resetSudoku = () => {
+                setAnswers({ SS: '', SM: '', SL: '', MS: '', MM: '', ML: '', LS: '', LM: '', LL: '' });
+                setHintsUsed(0); setShowSolution(false);
+            };
+
+            return (
+                <div className="animate-fade-in pb-10">
+                    <div className="bg-white rounded-[2rem] p-5 md:p-8 shadow-sm border border-slate-200 relative overflow-hidden">
+                        <h2 className="text-2xl font-black mb-2 text-slate-800">계층 스도쿠 훈련장</h2>
+                        <p className="text-slate-500 text-sm font-medium mb-6">모바일 최적화 및 5단계 난이도가 추가되었습니다.</p>
+
+                        <div className="flex gap-2 mb-6 bg-slate-100 p-1.5 rounded-2xl w-full overflow-x-auto scrollbar-hide">
+                            {levelsArray.map(lvl => (
+                                <button key={lvl} onClick={() => setLevel(lvl)}
+                                    className={`whitespace-nowrap px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${level === lvl ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-700 bg-white border border-slate-200'}`}>
+                                    {lvl}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="flex flex-col xl:flex-row gap-6">
+                            {/* 미션 & 풀이 영역 */}
+                            <div className="flex-1 space-y-4">
+                                <div className="bg-slate-800 text-white p-5 md:p-6 rounded-2xl shadow-inner border border-slate-700">
+                                    <h3 className="font-bold text-yellow-400 mb-3 text-xs tracking-widest uppercase">Mission [{level}]</h3>
+                                    <ul className="space-y-2 text-sm font-medium text-slate-100 mb-4">
+                                        {currentPuzzle.conditions.map((cond, i) => (
+                                            <li key={i} className="flex gap-2 items-start"><span className="bg-indigo-600 text-indigo-50 px-1.5 rounded text-[10px] mt-0.5 whitespace-nowrap">C{i+1}</span> <span>{cond}</span></li>
+                                        ))}
+                                    </ul>
+                                    
+                                    {!showSolution && (
+                                        <div className="space-y-2 mb-4">
+                                            {currentPuzzle.hints.map((hint, i) => (
+                                                hintsUsed > i && <div key={i} className="bg-slate-700/80 text-slate-200 p-3 rounded-lg text-sm animate-fade-in border border-slate-600/50">💡 {hint}</div>
+                                            ))}
+                                        </div>
+                                    )}
+                                    
+                                    {/* 수정된 버튼 로직: 힌트를 다 써도 풀이 보기 버튼은 보임 */}
+                                    {!showSolution && !isAllCorrect && (
+                                        <div className="flex gap-2 mt-5">
+                                            <button 
+                                                onClick={useHint} 
+                                                disabled={hintsUsed >= currentPuzzle.hints.length}
+                                                className={`flex-1 py-3 rounded-xl font-bold text-sm transition-colors border ${hintsUsed >= currentPuzzle.hints.length ? 'bg-white/5 text-slate-500 border-white/10 cursor-not-allowed' : 'bg-white/10 hover:bg-white/20 text-white border-white/20'}`}
+                                            >
+                                                {hintsUsed >= currentPuzzle.hints.length ? '모든 힌트 개방됨' : `힌트 열기 (${hintsUsed}/${currentPuzzle.hints.length})`}
+                                            </button>
+                                            <button onClick={triggerShowSolution} className="flex-1 py-3 bg-rose-500/80 hover:bg-rose-500 rounded-xl font-bold text-sm transition-colors text-white">
+                                                포기하고 풀이 보기
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {showSolution && (
+                                        <div className="mt-4 p-4 bg-slate-900 rounded-xl border border-yellow-500/50 animate-fade-in">
+                                            <h4 className="font-bold text-yellow-400 mb-3 text-sm flex items-center gap-2">👨‍🏫 강사의 스텝별 풀이</h4>
+                                            <ul className="space-y-2.5 text-xs text-slate-300 leading-relaxed">
+                                                {currentPuzzle.solutionSteps.map((step, idx) => (
+                                                    <li key={idx} className="pb-2 border-b border-slate-700/50 last:border-0">{step}</li>
+                                                ))}
+                                            </ul>
+                                            <button onClick={resetSudoku} className="mt-5 w-full py-2.5 bg-indigo-600 rounded-lg text-sm font-bold text-white hover:bg-indigo-500 transition-colors">
+                                                다시 풀어보기
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* 스도쿠 표 영역 (가로 스크롤 허용, 찌그러짐 방지) */}
+                            <div className="flex-[1.5] relative bg-white p-1">
+                                {isAllCorrect && !showSolution && (
+                                    <div className="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 rounded-2xl flex flex-col items-center justify-center animate-fade-in border border-emerald-200">
+                                        <div className="text-5xl mb-2 animate-bounce">🎉</div>
+                                        <h3 className="text-2xl font-black text-slate-800 mb-2">Perfect Clear!</h3>
+                                        <button onClick={resetSudoku} className="mt-4 bg-slate-800 text-white px-8 py-3 rounded-full font-black shadow-lg hover:bg-slate-700 transition-colors">
+                                            다음 문제 도전
+                                        </button>
+                                    </div>
+                                )}
+
+                                <div className="overflow-x-auto pb-4 rounded-xl border border-slate-200 shadow-sm bg-slate-50">
+                                    <table className="w-full text-center border-collapse min-w-[500px]">
+                                        <thead>
+                                            <tr>
+                                                <th colSpan="2" rowSpan="2" className="bg-slate-200 border-b-2 border-r-2 border-slate-300 p-2 whitespace-nowrap font-black text-slate-600 text-sm">구분 (단위: 명)</th>
+                                                <th colSpan="3" className="bg-indigo-100 border-b-2 border-slate-300 p-2 font-black tracking-widest text-indigo-800 border-r-2 text-sm">자녀 세대</th>
+                                                <th rowSpan="2" className="bg-slate-700 border-b-2 border-slate-800 p-2 text-white font-black whitespace-nowrap text-sm">계<br/><span className="text-xs font-medium text-slate-300">(부모)</span></th>
+                                            </tr>
+                                            <tr>
+                                                <th className="bg-indigo-50 border-b-2 border-r border-slate-300 p-2 text-indigo-700 font-bold text-sm">상층</th>
+                                                <th className="bg-indigo-50 border-b-2 border-r border-slate-300 p-2 text-indigo-700 font-bold text-sm">중층</th>
+                                                <th className="bg-indigo-50 border-b-2 border-r-2 border-slate-300 p-2 text-indigo-700 font-bold text-sm">하층</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th rowSpan="3" className="bg-indigo-100 border-b-2 border-r-2 border-slate-300 p-2 font-black tracking-widest text-indigo-800 w-10 text-sm whitespace-nowrap" style={{writingMode: 'vertical-rl', textOrientation: 'upright'}}>부모 세대</th>
+                                                <th className="bg-indigo-50 border-b border-r border-slate-200 p-2 text-indigo-700 font-bold text-sm whitespace-nowrap">상층</th>
+                                                <td className="p-1 border-b border-r border-slate-200"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('SS')}`} value={answers.SS} onChange={(e) => handleInputChange('SS', e.target.value)}/></td>
+                                                <td className="p-1 border-b border-r border-slate-200"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('SM')}`} value={answers.SM} onChange={(e) => handleInputChange('SM', e.target.value)}/></td>
+                                                <td className="p-1 border-b border-r-2 border-slate-300"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('SL')}`} value={answers.SL} onChange={(e) => handleInputChange('SL', e.target.value)}/></td>
+                                                <td className="p-2 border-b-2 border-slate-800 bg-slate-800 text-white font-black text-lg shadow-inner">{currentPuzzle.parents.S}</td>
+                                            </tr>
+                                            <tr>
+                                                <th className="bg-indigo-50 border-b border-r border-slate-200 p-2 text-indigo-700 font-bold text-sm whitespace-nowrap">중층</th>
+                                                <td className="p-1 border-b border-r border-slate-200"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('MS')}`} value={answers.MS} onChange={(e) => handleInputChange('MS', e.target.value)}/></td>
+                                                <td className="p-1 border-b border-r border-slate-200"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('MM')}`} value={answers.MM} onChange={(e) => handleInputChange('MM', e.target.value)}/></td>
+                                                <td className="p-1 border-b border-r-2 border-slate-300"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('ML')}`} value={answers.ML} onChange={(e) => handleInputChange('ML', e.target.value)}/></td>
+                                                <td className="p-2 border-b-2 border-slate-800 bg-slate-800 text-white font-black text-lg shadow-inner">{currentPuzzle.parents.M}</td>
+                                            </tr>
+                                            <tr>
+                                                <th className="bg-indigo-50 border-b-2 border-r border-slate-300 p-2 text-indigo-700 font-bold text-sm whitespace-nowrap">하층</th>
+                                                <td className="p-1 border-b-2 border-r border-slate-200"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('LS')}`} value={answers.LS} onChange={(e) => handleInputChange('LS', e.target.value)}/></td>
+                                                <td className="p-1 border-b-2 border-r border-slate-200"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('LM')}`} value={answers.LM} onChange={(e) => handleInputChange('LM', e.target.value)}/></td>
+                                                <td className="p-1 border-b-2 border-r-2 border-slate-300"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('LL')}`} value={answers.LL} onChange={(e) => handleInputChange('LL', e.target.value)}/></td>
+                                                <td className="p-2 border-b-2 border-slate-800 bg-slate-800 text-white font-black text-lg shadow-inner">{currentPuzzle.parents.L}</td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th colSpan="2" className="bg-slate-700 border-r-2 border-slate-800 p-2 text-white font-bold whitespace-nowrap text-sm">계 <span className="text-xs font-medium text-slate-300">(자녀)</span></th>
+                                                <td className="p-2 border-r border-slate-700 bg-slate-800 text-white font-black text-lg shadow-inner">{currentPuzzle.children.S}</td>
+                                                <td className="p-2 border-r border-slate-700 bg-slate-800 text-white font-black text-lg shadow-inner">{currentPuzzle.children.M}</td>
+                                                <td className="p-2 border-r-2 border-slate-800 bg-slate-800 text-white font-black text-lg shadow-inner">{currentPuzzle.children.L}</td>
+                                                <td className="p-2 bg-indigo-600 border-t-2 border-indigo-400 text-white font-black text-xl shadow-lg">100</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // ==========================================
+        // 탭 4: 복지제도 3단 벤다이어그램 계산기
+        // ==========================================
+        function WelfareVennApp() {
+            const [valA, setValA] = useState(60); 
+            const [valB, setValB] = useState(30); 
+            const [valC, setValC] = useState(20); 
+            const [valAB, setValAB] = useState(10); 
+            const [valBC, setValBC] = useState(5); 
+            const [valCA, setValCA] = useState(8); 
+            const [valABC, setValABC] = useState(2); 
+
+            const getScale = (val) => {
+                const baseScale = 0.75;
+                return baseScale + (val / 100) * 0.55; 
+            };
+
+            const scaleA = getScale(valA);
+            const scaleB = getScale(valB);
+            const scaleC = getScale(valC);
+
+            const onlyAB = Math.max(0, valAB - valABC);
+            const onlyBC = Math.max(0, valBC - valABC);
+            const onlyCA = Math.max(0, valCA - valABC);
+
+            const onlyA = Math.max(0, valA - valAB - valCA + valABC);
+            const onlyB = Math.max(0, valB - valAB - valBC + valABC);
+            const onlyC = Math.max(0, valC - valBC - valCA + valABC);
+
+            const unionAll = onlyA + onlyB + onlyC + onlyAB + onlyBC + onlyCA + valABC;
+            const blindSpot = Math.max(0, 100 - unionAll);
+
+            const onlyOneSum = onlyA + onlyB + onlyC;
+            const twoOrMoreSum = onlyAB + onlyBC + onlyCA + valABC;
+
+            return (
+                <div className="animate-fade-in pb-10 space-y-6">
+                    <div className="bg-white rounded-3xl p-5 md:p-8 shadow-sm border border-slate-200">
+                        <h2 className="text-2xl font-black mb-2 text-slate-800 flex items-center gap-2">
+                            <span className="text-indigo-500">⭕</span> 복지 벤다이어그램 해석기
+                        </h2>
+                        <p className="text-slate-500 text-sm font-medium mb-6">
+                            수치를 변경하면 원의 크기가 실시간으로 연동됩니다. 하단의 '발문 번역기'를 꼭 체화하세요.
+                        </p>
+
+                        <div className="flex flex-col lg:flex-row gap-8 items-center">
+                            <div className="w-full lg:w-1/2 space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200 shadow-inner">
+                                <h3 className="font-bold text-slate-700 text-sm mb-2 border-b pb-2">수급률 (%) 직접 입력</h3>
+                                <div className="grid grid-cols-3 gap-2">
+                                    <div>
+                                        <label className="block text-[11px] font-bold text-blue-600 mb-1">A (사회보험)</label>
+                                        <input type="number" min="0" max="100" value={valA} onChange={(e)=>setValA(Number(e.target.value))} className="w-full p-2 border rounded-lg text-center font-bold"/>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[11px] font-bold text-rose-600 mb-1">B (공공부조)</label>
+                                        <input type="number" min="0" max="100" value={valB} onChange={(e)=>setValB(Number(e.target.value))} className="w-full p-2 border rounded-lg text-center font-bold"/>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[11px] font-bold text-emerald-600 mb-1">C (사회서비스)</label>
+                                        <input type="number" min="0" max="100" value={valC} onChange={(e)=>setValC(Number(e.target.value))} className="w-full p-2 border rounded-lg text-center font-bold"/>
+                                    </div>
+                                </div>
+                                <h3 className="font-bold text-slate-700 text-sm mt-4 mb-2 border-b pb-2">중복 수급률 (%)</h3>
+                                <div className="grid grid-cols-4 gap-2">
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-indigo-800 mb-1">A∩B 중복</label>
+                                        <input type="number" min="0" value={valAB} onChange={(e)=>setValAB(Number(e.target.value))} className="w-full p-1 border rounded-lg text-center font-bold bg-indigo-50"/>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-indigo-800 mb-1">B∩C 중복</label>
+                                        <input type="number" min="0" value={valBC} onChange={(e)=>setValBC(Number(e.target.value))} className="w-full p-1 border rounded-lg text-center font-bold bg-indigo-50"/>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-indigo-800 mb-1">C∩A 중복</label>
+                                        <input type="number" min="0" value={valCA} onChange={(e)=>setValCA(Number(e.target.value))} className="w-full p-1 border rounded-lg text-center font-bold bg-indigo-50"/>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-purple-800 mb-1">A∩B∩C</label>
+                                        <input type="number" min="0" value={valABC} onChange={(e)=>setValABC(Number(e.target.value))} className="w-full p-1 border rounded-lg text-center font-black bg-purple-100 border-purple-300"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-4">
+                                <div className="relative w-64 h-64 mb-2">
+                                    <div className="absolute inset-[-20px] border-2 border-dashed border-slate-300 rounded-xl bg-white shadow-sm -z-10 flex flex-col justify-between p-2">
+                                        <span className="text-[10px] font-bold text-slate-400">전체 가구 (100%)</span>
+                                        <span className="text-xs font-black text-rose-600 bg-rose-50 w-max px-2 rounded">사각지대(여집합): {blindSpot}%</span>
+                                    </div>
+
+                                    {/* Circle A */}
+                                    <div className="absolute w-36 h-36 rounded-full bg-blue-300/50 border-2 border-blue-500 top-0 left-2 venn-circle flex flex-col items-center justify-start pt-4" style={{transform: `scale(${scaleA})`, transformOrigin: 'center'}}>
+                                        <span className="text-[10px] font-bold text-blue-900 leading-none">순수 A</span>
+                                        <span className="font-black text-blue-950 text-sm leading-none mt-1">{onlyA}%</span>
+                                    </div>
+
+                                    {/* Circle B */}
+                                    <div className="absolute w-36 h-36 rounded-full bg-rose-300/50 border-2 border-rose-500 top-0 right-2 venn-circle flex flex-col items-center justify-start pt-4" style={{transform: `scale(${scaleB})`, transformOrigin: 'center'}}>
+                                        <span className="text-[10px] font-bold text-rose-900 leading-none">순수 B</span>
+                                        <span className="font-black text-rose-950 text-sm leading-none mt-1">{onlyB}%</span>
+                                    </div>
+
+                                    {/* Circle C */}
+                                    <div className="absolute w-36 h-36 rounded-full bg-emerald-300/50 border-2 border-emerald-500 bottom-0 left-14 venn-circle flex flex-col items-center justify-end pb-4" style={{transform: `scale(${scaleC})`, transformOrigin: 'center'}}>
+                                        <span className="text-[10px] font-bold text-emerald-900 leading-none">순수 C</span>
+                                        <span className="font-black text-emerald-950 text-sm leading-none mt-1">{onlyC}%</span>
+                                    </div>
+
+                                    {/* 교집합 값들 */}
+                                    <div className="absolute top-[50px] left-[110px] w-10 text-center z-10"><span className="text-[11px] font-black text-indigo-900 bg-white/70 px-1 rounded">{onlyAB}%</span></div>
+                                    <div className="absolute bottom-[70px] left-[60px] w-10 text-center z-10"><span className="text-[11px] font-black text-teal-900 bg-white/70 px-1 rounded">{onlyCA}%</span></div>
+                                    <div className="absolute bottom-[70px] right-[60px] w-10 text-center z-10"><span className="text-[11px] font-black text-orange-900 bg-white/70 px-1 rounded">{onlyBC}%</span></div>
+                                    <div className="absolute top-[100px] left-[110px] w-10 text-center z-20"><span className="text-sm font-black text-purple-900 bg-white/90 px-1 rounded-full shadow-sm">{valABC}%</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 수능 단골 발문 번역기 대폭 확장 */}
+                        <div className="mt-8 bg-slate-800 p-6 rounded-2xl shadow-inner">
+                            <h4 className="font-black text-yellow-400 mb-4 text-lg flex items-center gap-2">
+                                👨‍🏫 수능 단골 발문 완벽 번역기
+                            </h4>
+                            <div className="space-y-3 text-sm font-medium text-slate-200">
+                                
+                                <div className="bg-slate-700/50 p-4 rounded-xl border border-slate-600/50">
+                                    <p className="text-white font-bold mb-1">📌 1. "오직 하나의 혜택만을 받는 가구"</p>
+                                    <p className="text-indigo-300 text-xs mb-1">= 순수 A + 순수 B + 순수 C</p>
+                                    <p className="font-black text-lg text-yellow-300">{onlyA} + {onlyB} + {onlyC} = {onlyOneSum}%</p>
+                                    <div className="mt-2 text-xs bg-slate-900/50 p-2 rounded">
+                                        <b>[선지 판별]</b> "(가)가 (나)에 비해 8%p 더 높다" 👉 (가)의 값에서 (나)의 값을 뺐을 때 정확히 8이 나오는지 확인!
+                                    </div>
+                                </div>
+                                
+                                <div className="bg-slate-700/50 p-4 rounded-xl border border-slate-600/50">
+                                    <p className="text-white font-bold mb-1">📌 2. "두 가지 이상의 제도의 수혜를 받는 가구"</p>
+                                    <p className="text-indigo-300 text-xs mb-1">= (순수 A∩B) + (순수 B∩C) + (순수 C∩A) + (A∩B∩C 모두)</p>
+                                    <p className="font-black text-lg text-yellow-300">{onlyAB} + {onlyBC} + {onlyCA} + {valABC} = {twoOrMoreSum}%</p>
+                                </div>
+
+                                <div className="bg-slate-700/50 p-4 rounded-xl border border-slate-600/50">
+                                    <p className="text-white font-bold mb-1">📌 3. "A와 B'만' 중복 수혜 가구" vs "A와 B 중복 수혜 가구"</p>
+                                    <ul className="text-xs space-y-1 mt-2">
+                                        <li>👉 <span className="text-emerald-300 font-bold">"A와 B만"</span> = 3개 교집합을 뺀 <b>순수 교집합</b> = <b className="text-yellow-300">{onlyAB}%</b></li>
+                                        <li>👉 <span className="text-emerald-300 font-bold">"A와 B"</span> = <b>전체 교집합</b> = (순수 교집합 + 3개 교집합) = <b className="text-yellow-300">{valAB}%</b></li>
+                                    </ul>
+                                </div>
+
+                                <div className="bg-slate-700/50 p-4 rounded-xl border border-slate-600/50">
+                                    <p className="text-white font-bold mb-1">📌 4. "A 수급 가구 중 B도 수급하는 가구의 비율"</p>
+                                    <p className="text-indigo-300 text-xs mb-1">= (A와 B 교집합) ÷ (A 전체) × 100 <span className="text-slate-400">-> [조건부 확률]</span></p>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <Fraction num={valAB} den={valA} className="text-yellow-300" /> <span className="text-yellow-300 font-black">× 100 = {((valAB / valA) * 100).toFixed(1)}%</span>
+                                    </div>
+                                    <div className="mt-2 text-xs bg-slate-900/50 p-2 rounded text-rose-300">
+                                        <b>주의:</b> 이 비율은 전체 인구 대비 퍼센트가 아닙니다! 분모가 100이 아닌 'A 가구 수({valA})'로 바뀌었음에 매우 유의하세요.
+                                    </div>
+                                </div>
+
+                                <div className="bg-slate-700/50 p-4 rounded-xl border border-slate-600/50">
+                                    <p className="text-white font-bold mb-1">📌 5. "적어도 하나의 제도를 수급하는 가구" & "어떤 제도도 수급받지 못하는 가구"</p>
+                                    <ul className="text-xs space-y-1 mt-2">
+                                        <li>👉 <span className="text-emerald-300 font-bold">적어도 하나(합집합)</span> = 100 - 사각지대 = <b className="text-yellow-300">{unionAll}%</b></li>
+                                        <li>👉 <span className="text-emerald-300 font-bold">어떤 것도 X(사각지대)</span> = 100 - 합집합 = <b className="text-yellow-300">{blindSpot}%</b></li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // ==========================================
+        // 탭 5: 가중평균 시소 시뮬레이터
+        // ==========================================
+        function SeesawApp() {
+            const [sliderA, setSliderA] = useState(15);
+            const [sliderB, setSliderB] = useState(85);
+            const [sliderTotal, setSliderTotal] = useState(30);
+
+            useEffect(() => {
+                if (sliderTotal <= sliderA) setSliderTotal(sliderA + 1);
+                if (sliderTotal >= sliderB) setSliderTotal(sliderB - 1);
+                if (sliderA >= sliderB) setSliderB(sliderA + 10);
+            }, [sliderA, sliderB, sliderTotal]);
+
+            const distA = Math.abs(sliderTotal - sliderA);
+            const distB = Math.abs(sliderB - sliderTotal);
+            
+            const totalDist = distA + distB;
+            const popRatioA = Math.round((distB / totalDist) * 100);
+            const popRatioB = Math.round((distA / totalDist) * 100);
+
+            const recValA = distB * sliderA;
+            const recValB = distA * sliderB;
+            const totalRec = recValA + recValB;
+            const recRatioA = Math.round((recValA / totalRec) * 100);
+            const recRatioB = Math.round((recValB / totalRec) * 100);
+
+            const fulcrumPos = ((sliderTotal - sliderA) / (sliderB - sliderA)) * 100;
+            const tiltAngle = (50 - fulcrumPos) * 0.2; 
+
+            return (
+                <div className="animate-fade-in pb-10">
+                    <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 relative overflow-hidden">
+                        <div className="flex justify-between items-start mb-6">
+                            <div>
+                                <h2 className="text-2xl font-black mb-1 text-slate-800">가중평균 시소 시뮬레이터</h2>
+                                <p className="text-slate-500 text-sm font-medium">받침점(전체평균)을 조작하여 숨겨진 <b>인구수 비례</b>와 <b>실제 수급자 수 비례</b>를 찾아보세요.</p>
+                            </div>
+                            <span className="bg-rose-100 text-rose-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-rose-200">Pro</span>
+                        </div>
+
+                        <div className="bg-slate-50 p-6 md:p-10 rounded-3xl border border-slate-200 mb-8 relative">
+                            <div className="flex justify-between items-end mb-20 text-center px-1">
+                                <div className="bg-white px-3 py-3 rounded-2xl shadow-sm border border-blue-100 min-w-[70px]">
+                                    <div className="text-[9px] font-bold text-slate-400 mb-1">A지역 수급률</div>
+                                    <div className="text-xl md:text-2xl font-black text-blue-600">{sliderA}%</div>
+                                </div>
+                                <div className="bg-white px-5 py-4 rounded-2xl shadow-md border-2 border-emerald-400 transform scale-110 z-10 relative mx-2">
+                                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-emerald-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full whitespace-nowrap shadow-sm">전체 평균</div>
+                                    <div className="text-3xl font-black text-emerald-500">{sliderTotal}%</div>
+                                </div>
+                                <div className="bg-white px-3 py-3 rounded-2xl shadow-sm border border-rose-100 min-w-[70px]">
+                                    <div className="text-[9px] font-bold text-slate-400 mb-1">B지역 수급률</div>
+                                    <div className="text-xl md:text-2xl font-black text-rose-600">{sliderB}%</div>
+                                </div>
+                            </div>
+
+                            <div className="relative h-44 flex items-end justify-center mb-8 px-4">
+                                <div className="absolute top-0 w-full px-4 flex text-[11px] font-black text-slate-500">
+                                    <div className="border-b-2 border-dashed border-blue-300 relative flex justify-center pb-2" style={{ width: `${fulcrumPos}%` }}>
+                                        거리: {distA}
+                                    </div>
+                                    <div className="border-b-2 border-dashed border-rose-300 relative flex justify-center pb-2" style={{ width: `${100 - fulcrumPos}%` }}>
+                                        거리: {distB}
+                                    </div>
+                                </div>
+
+                                <div className="w-full relative z-10 transition-transform duration-300 ease-out origin-bottom" style={{ transform: `rotate(${tiltAngle}deg)` }}>
+                                    <div className="absolute left-0 bottom-4 flex flex-col items-center z-20" style={{ transform: `scale(${Math.max(0.7, popRatioA / 50)})`, transformOrigin: 'bottom left', transition: 'transform 0.3s ease-out' }}>
+                                        <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-black px-4 py-3 rounded-xl shadow-lg border border-blue-400 text-center min-w-[70px]">
+                                            <span className="text-[9px] opacity-80 block mb-0.5">인구(무게) 비</span>
+                                            <span className="text-lg">{popRatioA}</span>
+                                        </div>
+                                    </div>
+                                    <div className="absolute right-0 bottom-4 flex flex-col items-center z-20" style={{ transform: `scale(${Math.max(0.7, popRatioB / 50)})`, transformOrigin: 'bottom right', transition: 'transform 0.3s ease-out' }}>
+                                        <div className="bg-gradient-to-br from-rose-400 to-rose-500 text-white font-black px-4 py-3 rounded-xl shadow-lg border border-rose-400 text-center min-w-[70px]">
+                                            <span className="text-[9px] opacity-80 block mb-0.5">인구(무게) 비</span>
+                                            <span className="text-lg">{popRatioB}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="w-full h-4 bg-slate-300 rounded-full shadow-inner border border-white"></div>
+                                </div>
+
+                                <div className="absolute bottom-[-20px] z-30 transition-all duration-300 ease-out w-full px-4">
+                                    <div className="relative w-full h-full">
+                                        <div className="absolute transition-all duration-300 ease-out" style={{ left: `${fulcrumPos}%`, transform: 'translateX(-50%)' }}>
+                                            <div className="w-0 h-0 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent border-b-[30px] border-b-emerald-500 filter drop-shadow-md"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mt-14 bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 relative">
+                                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md whitespace-nowrap">
+                                    가운데 원을 좌우로 드래그
+                                </div>
+                                <input 
+                                    type="range" min={sliderA + 1} max={sliderB - 1} value={sliderTotal} 
+                                    onChange={(e) => setSliderTotal(Number(e.target.value))}
+                                    className="w-full h-3 bg-slate-200 rounded-full appearance-none cursor-pointer mt-2"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-lg animate-fade-in mt-8">
+                            <div className="bg-slate-900 px-5 py-3 border-b border-slate-700 flex justify-between items-center">
+                                <h4 className="font-bold text-white text-sm flex items-center gap-2">
+                                    <span className="bg-emerald-500 w-2 h-2 rounded-full animate-pulse"></span> 실시간 자동 도출 데이터
+                                </h4>
+                                <span className="text-slate-400 text-[10px] md:text-xs font-medium">수능 선지 판별용</span>
+                            </div>
+                            
+                            <div className="p-5 space-y-4">
+                                <div className="flex justify-between items-center bg-slate-700/30 p-3 rounded-xl border border-slate-600/50">
+                                    <div className="flex items-center gap-2 text-slate-300 text-sm font-bold">
+                                        <span className="text-lg">📏</span> 거리의 비 (A : B)
+                                    </div>
+                                    <div className="font-black text-white text-lg">
+                                        <span className="text-blue-400">{distA}</span> : <span className="text-rose-400">{distB}</span>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex justify-between items-center bg-indigo-900/40 p-3 rounded-xl border border-indigo-700/50">
+                                    <div className="flex items-center gap-2 text-indigo-200 text-sm font-bold">
+                                        <span className="text-lg">👥</span> <span className="underline decoration-indigo-400">인구 수</span>의 비 (A : B)
+                                    </div>
+                                    <div className="font-black text-white text-lg text-right">
+                                        <span className="text-blue-400">{distB}</span> : <span className="text-rose-400">{distA}</span><br/>
+                                        <span className="text-[10px] text-slate-400 font-normal bg-slate-800 px-2 py-0.5 rounded-full inline-block mt-1">거리비의 역수</span>
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-between items-start md:items-center bg-emerald-900/30 p-4 rounded-xl border border-emerald-700/50 flex-col md:flex-row gap-3">
+                                    <div className="flex items-center gap-2 text-emerald-200 text-sm font-bold">
+                                        <span className="text-xl">💰</span> 실제 <span className="text-white bg-emerald-600 px-1.5 rounded mx-1">수급자 수</span>의 비 (A : B)
+                                    </div>
+                                    <div className="text-right w-full md:w-auto">
+                                        <div className="font-black text-white text-xl">
+                                            <span className="text-blue-400">{recRatioA}</span> : <span className="text-rose-400">{recRatioB}</span>
+                                        </div>
+                                        <div className="text-[10px] text-emerald-300 font-bold mt-1">
+                                            계산: (인구 비례 × 각 지역 수급률)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
