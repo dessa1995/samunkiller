@@ -9,8 +9,9 @@
     <!-- React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Babel (안정성 확보를 위해 특정 버전 고정 및 설정 추가) -->
+    <script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
+    
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         
@@ -21,6 +22,7 @@
             -webkit-font-smoothing: antialiased;
         }
         
+        /* 스크롤바 커스텀 */
         ::-webkit-scrollbar { height: 6px; width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -62,12 +64,36 @@
         .math-fraction { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 4px; }
         .math-fraction .num { border-bottom: 2px solid currentColor; padding: 0 4px; line-height: 1.2; }
         .math-fraction .den { padding: 0 4px; line-height: 1.2; }
+
+        /* 레인지 슬라이더 커스텀 */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: currentColor;
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #e2e8f0;
+            border-radius: 2px;
+        }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
-    <script type="text/babel">
+    <script type="text/babel" data-presets="react">
         const { useState, useEffect } = React;
 
         const Fraction = ({ num, den, className = "" }) => (
@@ -135,6 +161,7 @@
 
             return (
                 <div className="min-h-screen bg-slate-50 pb-28 text-slate-800 font-sans">
+                    {/* Header */}
                     <header className="glass-panel sticky top-0 z-50 px-4 py-4 flex justify-center items-center">
                         <div className="max-w-3xl w-full flex items-center justify-between">
                             <div className="flex items-center gap-3">
@@ -164,7 +191,6 @@
                                 </p>
                             </div>
 
-                            {}
                             <FeedCard title="인구 부양비와 노령화 지수 함정" tag="빈출 1위: 인구 구조" icon="👨‍👩‍👧‍👦" likes="28.9k">
                                 <p className="text-slate-600 font-medium mb-4 text-sm leading-relaxed">
                                     "유소년 인구가 20% 감소하면 유소년 부양비도 20% 감소한다?" 절대 아닙니다! 분모인 '부양 인구'가 변했는지 확인해야 합니다.
@@ -218,7 +244,6 @@
                                 ]} />
                             </FeedCard>
 
-                            {}
                             <FeedCard title="A에 대한 B의 비율" tag="수학적 사고 기초" icon="🧮" likes="18.5k">
                                 <p className="text-slate-600 font-medium mb-4 text-sm leading-relaxed">
                                     가장 기초적이면서 가장 많이 틀리는 수능 1번 함정입니다. 분모/분자 위치를 헷갈리면 끝장입니다.
@@ -324,7 +349,7 @@
                             </FeedCard>
                         </div>
 
-                        {}
+                        {/* 탭 2: 기출 분석 */}
                         <div className={`tab-content ${activeTab === 'solution' ? 'active' : ''}`}>
                             <div className="mb-8 p-6 md:p-8 bg-white rounded-[2rem] border-2 border-indigo-100 shadow-sm relative overflow-hidden">
                                 <h2 className="text-2xl font-black mb-2 text-slate-800">수능 기출 유형 분석 & 첫 단추 꿰기</h2>
@@ -378,21 +403,24 @@
                             </div>
                         </div>
 
-                        {}
+                        {/* 탭 3: 스도쿠 훈련 */}
                         <div className={`tab-content ${activeTab === 'sudoku' ? 'active' : ''}`}>
                             <SudokuApp />
                         </div>
 
+                        {/* 탭 4: 복지 시각화 */}
                         <div className={`tab-content ${activeTab === 'venn' ? 'active' : ''}`}>
                             <WelfareVennApp />
                         </div>
 
+                        {/* 탭 5: 시소 시뮬 */}
                         <div className={`tab-content ${activeTab === 'seesaw' ? 'active' : ''}`}>
                             <SeesawApp />
                         </div>
 
                     </main>
 
+                    {/* 하단 네비게이션 */}
                     <nav className="fixed bottom-0 w-full glass-panel z-50 rounded-t-3xl border-t border-slate-200/50 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
                         <div className="max-w-3xl mx-auto px-1 md:px-4 py-2 pb-safe flex justify-between items-center">
                             {navItems.map(item => (
@@ -423,7 +451,7 @@
         }
 
         // ==========================================
-        // 스도쿠 앱 컴포넌트 (5단계 난이도 및 힌트 로직 픽스)
+        // 스도쿠 훈련 앱 (기존 5단계 + 완벽 보존)
         // ==========================================
         function SudokuApp() {
             const [level, setLevel] = useState('Lv1. 기초');
@@ -545,7 +573,7 @@
                 <div className="animate-fade-in pb-10">
                     <div className="bg-white rounded-[2rem] p-5 md:p-8 shadow-sm border border-slate-200 relative overflow-hidden">
                         <h2 className="text-2xl font-black mb-2 text-slate-800">계층 스도쿠 훈련장</h2>
-                        <p className="text-slate-500 text-sm font-medium mb-6">모바일 최적화 및 5단계 난이도가 추가되었습니다.</p>
+                        <p className="text-slate-500 text-sm font-medium mb-6">모바일 최적화 및 5단계 난이도가 적용되었습니다.</p>
 
                         <div className="flex gap-2 mb-6 bg-slate-100 p-1.5 rounded-2xl w-full overflow-x-auto scrollbar-hide">
                             {levelsArray.map(lvl => (
@@ -557,7 +585,6 @@
                         </div>
 
                         <div className="flex flex-col xl:flex-row gap-6">
-                            {/* 미션 & 풀이 영역 */}
                             <div className="flex-1 space-y-4">
                                 <div className="bg-slate-800 text-white p-5 md:p-6 rounded-2xl shadow-inner border border-slate-700">
                                     <h3 className="font-bold text-yellow-400 mb-3 text-xs tracking-widest uppercase">Mission [{level}]</h3>
@@ -575,7 +602,6 @@
                                         </div>
                                     )}
                                     
-                                    {/* 수정된 버튼 로직: 힌트를 다 써도 풀이 보기 버튼은 보임 */}
                                     {!showSolution && !isAllCorrect && (
                                         <div className="flex gap-2 mt-5">
                                             <button 
@@ -607,7 +633,6 @@
                                 </div>
                             </div>
 
-                            {/* 스도쿠 표 영역 (가로 스크롤 허용, 찌그러짐 방지) */}
                             <div className="flex-[1.5] relative bg-white p-1">
                                 {isAllCorrect && !showSolution && (
                                     <div className="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 rounded-2xl flex flex-col items-center justify-center animate-fade-in border border-emerald-200">
@@ -676,7 +701,7 @@
         }
 
         // ==========================================
-        // 탭 4: 복지제도 3단 벤다이어그램 계산기
+        // 복지제도 3단 벤다이어그램 계산기 (수기 + 슬라이더 UI 개선)
         // ==========================================
         function WelfareVennApp() {
             const [valA, setValA] = useState(60); 
@@ -687,6 +712,7 @@
             const [valCA, setValCA] = useState(8); 
             const [valABC, setValABC] = useState(2); 
 
+            // 동적 스케일 계산
             const getScale = (val) => {
                 const baseScale = 0.75;
                 return baseScale + (val / 100) * 0.55; 
@@ -717,49 +743,80 @@
                             <span className="text-indigo-500">⭕</span> 복지 벤다이어그램 해석기
                         </h2>
                         <p className="text-slate-500 text-sm font-medium mb-6">
-                            수치를 변경하면 원의 크기가 실시간으로 연동됩니다. 하단의 '발문 번역기'를 꼭 체화하세요.
+                            슬라이더를 드래그하거나 직접 숫자를 입력하면 원의 크기가 실시간으로 연동됩니다. 하단의 '발문 번역기'를 꼭 체화하세요.
                         </p>
 
                         <div className="flex flex-col lg:flex-row gap-8 items-center">
-                            <div className="w-full lg:w-1/2 space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200 shadow-inner">
-                                <h3 className="font-bold text-slate-700 text-sm mb-2 border-b pb-2">수급률 (%) 직접 입력</h3>
-                                <div className="grid grid-cols-3 gap-2">
-                                    <div>
-                                        <label className="block text-[11px] font-bold text-blue-600 mb-1">A (사회보험)</label>
-                                        <input type="number" min="0" max="100" value={valA} onChange={(e)=>setValA(Number(e.target.value))} className="w-full p-2 border rounded-lg text-center font-bold"/>
-                                    </div>
-                                    <div>
-                                        <label className="block text-[11px] font-bold text-rose-600 mb-1">B (공공부조)</label>
-                                        <input type="number" min="0" max="100" value={valB} onChange={(e)=>setValB(Number(e.target.value))} className="w-full p-2 border rounded-lg text-center font-bold"/>
-                                    </div>
-                                    <div>
-                                        <label className="block text-[11px] font-bold text-emerald-600 mb-1">C (사회서비스)</label>
-                                        <input type="number" min="0" max="100" value={valC} onChange={(e)=>setValC(Number(e.target.value))} className="w-full p-2 border rounded-lg text-center font-bold"/>
+                            {/* 왼쪽: 향상된 UI의 조작 패널 */}
+                            <div className="w-full lg:w-[55%] space-y-6 bg-slate-50 p-5 rounded-2xl border border-slate-200 shadow-inner">
+                                
+                                {/* 전체 수급률 (A, B, C) */}
+                                <div>
+                                    <h3 className="font-bold text-slate-700 text-sm mb-3 border-b pb-2 flex items-center gap-2"><span className="text-lg">📊</span> 각 제도별 수급률 (%)</h3>
+                                    <div className="space-y-3">
+                                        <div className="flex flex-col gap-1">
+                                            <label className="text-[11px] font-bold text-blue-600">A (사회보험)</label>
+                                            <div className="flex items-center gap-3">
+                                                <input type="range" min="0" max="100" value={valA} onChange={(e)=>setValA(Number(e.target.value))} className="flex-1 text-blue-500" />
+                                                <input type="number" min="0" max="100" value={valA} onChange={(e)=>setValA(Number(e.target.value))} className="w-16 p-1.5 border rounded-lg text-center font-bold text-blue-900 bg-white" />
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <label className="text-[11px] font-bold text-rose-600">B (공공부조)</label>
+                                            <div className="flex items-center gap-3">
+                                                <input type="range" min="0" max="100" value={valB} onChange={(e)=>setValB(Number(e.target.value))} className="flex-1 text-rose-500" />
+                                                <input type="number" min="0" max="100" value={valB} onChange={(e)=>setValB(Number(e.target.value))} className="w-16 p-1.5 border rounded-lg text-center font-bold text-rose-900 bg-white" />
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <label className="text-[11px] font-bold text-emerald-600">C (사회서비스)</label>
+                                            <div className="flex items-center gap-3">
+                                                <input type="range" min="0" max="100" value={valC} onChange={(e)=>setValC(Number(e.target.value))} className="flex-1 text-emerald-500" />
+                                                <input type="number" min="0" max="100" value={valC} onChange={(e)=>setValC(Number(e.target.value))} className="w-16 p-1.5 border rounded-lg text-center font-bold text-emerald-900 bg-white" />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <h3 className="font-bold text-slate-700 text-sm mt-4 mb-2 border-b pb-2">중복 수급률 (%)</h3>
-                                <div className="grid grid-cols-4 gap-2">
-                                    <div>
-                                        <label className="block text-[10px] font-bold text-indigo-800 mb-1">A∩B 중복</label>
-                                        <input type="number" min="0" value={valAB} onChange={(e)=>setValAB(Number(e.target.value))} className="w-full p-1 border rounded-lg text-center font-bold bg-indigo-50"/>
-                                    </div>
-                                    <div>
-                                        <label className="block text-[10px] font-bold text-indigo-800 mb-1">B∩C 중복</label>
-                                        <input type="number" min="0" value={valBC} onChange={(e)=>setValBC(Number(e.target.value))} className="w-full p-1 border rounded-lg text-center font-bold bg-indigo-50"/>
-                                    </div>
-                                    <div>
-                                        <label className="block text-[10px] font-bold text-indigo-800 mb-1">C∩A 중복</label>
-                                        <input type="number" min="0" value={valCA} onChange={(e)=>setValCA(Number(e.target.value))} className="w-full p-1 border rounded-lg text-center font-bold bg-indigo-50"/>
-                                    </div>
-                                    <div>
-                                        <label className="block text-[10px] font-bold text-purple-800 mb-1">A∩B∩C</label>
-                                        <input type="number" min="0" value={valABC} onChange={(e)=>setValABC(Number(e.target.value))} className="w-full p-1 border rounded-lg text-center font-black bg-purple-100 border-purple-300"/>
+
+                                {/* 중복 수급률 */}
+                                <div>
+                                    <h3 className="font-bold text-slate-700 text-sm mb-3 border-b pb-2 flex items-center gap-2"><span className="text-lg">🔗</span> 중복 수급률 (%)</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="flex flex-col gap-1 bg-indigo-50 p-2.5 rounded-xl border border-indigo-100">
+                                            <label className="text-[10px] font-bold text-indigo-800 flex justify-between">A∩B 중복</label>
+                                            <div className="flex items-center gap-2">
+                                                <input type="range" min="0" max={Math.min(valA, valB)} value={valAB} onChange={(e)=>setValAB(Number(e.target.value))} className="flex-1 text-indigo-500" />
+                                                <input type="number" min="0" max={Math.min(valA, valB)} value={valAB} onChange={(e)=>setValAB(Number(e.target.value))} className="w-12 p-1 border rounded text-center font-bold text-xs bg-white" />
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-1 bg-indigo-50 p-2.5 rounded-xl border border-indigo-100">
+                                            <label className="text-[10px] font-bold text-indigo-800 flex justify-between">B∩C 중복</label>
+                                            <div className="flex items-center gap-2">
+                                                <input type="range" min="0" max={Math.min(valB, valC)} value={valBC} onChange={(e)=>setValBC(Number(e.target.value))} className="flex-1 text-indigo-500" />
+                                                <input type="number" min="0" max={Math.min(valB, valC)} value={valBC} onChange={(e)=>setValBC(Number(e.target.value))} className="w-12 p-1 border rounded text-center font-bold text-xs bg-white" />
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-1 bg-indigo-50 p-2.5 rounded-xl border border-indigo-100">
+                                            <label className="text-[10px] font-bold text-indigo-800 flex justify-between">C∩A 중복</label>
+                                            <div className="flex items-center gap-2">
+                                                <input type="range" min="0" max={Math.min(valC, valA)} value={valCA} onChange={(e)=>setValCA(Number(e.target.value))} className="flex-1 text-indigo-500" />
+                                                <input type="number" min="0" max={Math.min(valC, valA)} value={valCA} onChange={(e)=>setValCA(Number(e.target.value))} className="w-12 p-1 border rounded text-center font-bold text-xs bg-white" />
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-1 bg-purple-100 p-2.5 rounded-xl border border-purple-200">
+                                            <label className="text-[10px] font-bold text-purple-900 flex justify-between">A∩B∩C (모두 수급)</label>
+                                            <div className="flex items-center gap-2">
+                                                <input type="range" min="0" max={Math.min(valAB, valBC, valCA)} value={valABC} onChange={(e)=>setValABC(Number(e.target.value))} className="flex-1 text-purple-600" />
+                                                <input type="number" min="0" max={Math.min(valAB, valBC, valCA)} value={valABC} onChange={(e)=>setValABC(Number(e.target.value))} className="w-12 p-1 border border-purple-300 rounded text-center font-black text-xs bg-white text-purple-900" />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-4">
-                                <div className="relative w-64 h-64 mb-2">
+                            {/* 오른쪽: 벤다이어그램 시각화 (기존과 동일) */}
+                            <div className="w-full lg:w-[45%] flex flex-col items-center justify-center p-4">
+                                <div className="relative w-64 h-64 mb-2 mt-4 md:mt-0">
                                     <div className="absolute inset-[-20px] border-2 border-dashed border-slate-300 rounded-xl bg-white shadow-sm -z-10 flex flex-col justify-between p-2">
                                         <span className="text-[10px] font-bold text-slate-400">전체 가구 (100%)</span>
                                         <span className="text-xs font-black text-rose-600 bg-rose-50 w-max px-2 rounded">사각지대(여집합): {blindSpot}%</span>
@@ -824,9 +881,9 @@
 
                                 <div className="bg-slate-700/50 p-4 rounded-xl border border-slate-600/50">
                                     <p className="text-white font-bold mb-1">📌 4. "A 수급 가구 중 B도 수급하는 가구의 비율"</p>
-                                    <p className="text-indigo-300 text-xs mb-1">= (A와 B 교집합) ÷ (A 전체) × 100 <span className="text-slate-400">-> [조건부 확률]</span></p>
+                                    <p className="text-indigo-300 text-xs mb-1">= (A와 B 교집합) ÷ (A 전체) × 100 <span className="text-slate-400">-&gt; [조건부 확률]</span></p>
                                     <div className="flex items-center gap-2 mt-1">
-                                        <Fraction num={valAB} den={valA} className="text-yellow-300" /> <span className="text-yellow-300 font-black">× 100 = {((valAB / valA) * 100).toFixed(1)}%</span>
+                                        <Fraction num={valAB} den={valA} className="text-yellow-300" /> <span className="text-yellow-300 font-black">× 100 = {valA === 0 ? 0 : ((valAB / valA) * 100).toFixed(1)}%</span>
                                     </div>
                                     <div className="mt-2 text-xs bg-slate-900/50 p-2 rounded text-rose-300">
                                         <b>주의:</b> 이 비율은 전체 인구 대비 퍼센트가 아닙니다! 분모가 100이 아닌 'A 가구 수({valA})'로 바뀌었음에 매우 유의하세요.
@@ -948,7 +1005,7 @@
                                 <input 
                                     type="range" min={sliderA + 1} max={sliderB - 1} value={sliderTotal} 
                                     onChange={(e) => setSliderTotal(Number(e.target.value))}
-                                    className="w-full h-3 bg-slate-200 rounded-full appearance-none cursor-pointer mt-2"
+                                    className="w-full h-3 bg-slate-200 rounded-full appearance-none cursor-pointer mt-2 text-slate-600"
                                 />
                             </div>
                         </div>
