@@ -73,19 +73,19 @@
         }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 16px;
-            width: 16px;
+            height: 18px;
+            width: 18px;
             border-radius: 50%;
             background: currentColor;
             cursor: pointer;
-            margin-top: -6px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            margin-top: -7px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%;
             height: 4px;
             cursor: pointer;
-            background: #e2e8f0;
+            background: #cbd5e1;
             border-radius: 2px;
         }
     </style>
@@ -104,16 +104,16 @@
         );
 
         const FeedCard = ({ title, tag, icon, children, likes }) => (
-            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 mb-8 animate-fade-in hover:shadow-md transition-shadow relative overflow-hidden">
-                <div className="flex items-center gap-4 mb-5 pb-4 border-b border-slate-100">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center text-2xl shadow-inner border border-white">
+            <div className="bg-white rounded-3xl p-5 md:p-8 shadow-sm border border-slate-200 mb-8 animate-fade-in hover:shadow-md transition-shadow relative overflow-hidden">
+                <div className="flex items-center gap-3 md:gap-4 mb-5 pb-4 border-b border-slate-100">
+                    <div className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center text-xl md:text-2xl shadow-inner border border-white">
                         {icon}
                     </div>
-                    <div className="flex-1">
-                        <span className="text-[10px] font-bold text-indigo-500 tracking-wider uppercase bg-indigo-50 px-2 py-1 rounded-md mb-1 inline-block">{tag}</span>
-                        <h3 className="font-bold text-xl text-slate-800 leading-tight">{title}</h3>
+                    <div className="flex-1 min-w-0">
+                        <span className="text-[10px] font-bold text-indigo-500 tracking-wider uppercase bg-indigo-50 px-2 py-1 rounded-md mb-1 inline-block whitespace-nowrap">{tag}</span>
+                        <h3 className="font-bold text-lg md:text-xl text-slate-800 leading-tight truncate md:whitespace-normal">{title}</h3>
                     </div>
-                    <div className="flex flex-col items-center justify-center text-slate-400 hover:text-rose-500 transition-colors cursor-pointer">
+                    <div className="flex flex-col items-center justify-center text-slate-400 hover:text-rose-500 transition-colors cursor-pointer flex-shrink-0 pl-2">
                         <span className="text-xl">❤️</span>
                         <span className="text-xs font-bold mt-1">{likes}</span>
                     </div>
@@ -141,7 +141,7 @@
                             </button>
                         ))}
                     </div>
-                    <div className="bg-slate-50/80 rounded-2xl p-5 md:p-6 border border-slate-200 min-h-[160px] shadow-inner">
+                    <div className="bg-slate-50/80 rounded-2xl p-4 md:p-6 border border-slate-200 min-h-[160px] shadow-inner text-sm md:text-base">
                         {levels[activeLevel].content}
                     </div>
                 </div>
@@ -163,7 +163,7 @@
                 <div className="min-h-screen bg-slate-50 pb-28 text-slate-800 font-sans">
                     {/* Header */}
                     <header className="glass-panel sticky top-0 z-50 px-4 py-4 flex justify-center items-center">
-                        <div className="max-w-3xl w-full flex items-center justify-between">
+                        <div className="max-w-4xl w-full flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-gradient-to-tr from-indigo-600 to-blue-500 rounded-xl flex items-center justify-center text-white font-black text-2xl shadow-lg transform -rotate-3">S</div>
                                 <div>
@@ -177,15 +177,15 @@
                         </div>
                     </header>
 
-                    <main className="max-w-3xl mx-auto px-4 mt-6">
+                    <main className="max-w-4xl mx-auto px-4 mt-6">
                         
                         {/* 탭 1: 핵심 피드 */}
                         <div className={`tab-content ${activeTab === 'feed' ? 'active' : ''}`}>
-                            <div className="mb-8 p-8 bg-gradient-to-br from-slate-800 via-indigo-900 to-blue-800 rounded-[2rem] text-white shadow-2xl relative overflow-hidden">
-                                <div className="absolute top-0 right-0 opacity-10 text-9xl -translate-y-4 translate-x-4 mix-blend-overlay">📈</div>
+                            <div className="mb-8 p-6 md:p-8 bg-gradient-to-br from-slate-800 via-indigo-900 to-blue-800 rounded-[2rem] text-white shadow-2xl relative overflow-hidden">
+                                <div className="absolute top-0 right-0 opacity-10 text-8xl md:text-9xl -translate-y-4 translate-x-4 mix-blend-overlay">📈</div>
                                 <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-bold mb-4 inline-block backdrop-blur-sm border border-white/30">1등급 도약 플랜</span>
-                                <h2 className="text-3xl md:text-4xl font-black mb-3 relative z-10 leading-tight">수능 사문 도표,<br/>이제 <span className="text-yellow-300">수학</span>으로 뚫습니다.</h2>
-                                <p className="text-indigo-100 text-sm font-medium relative z-10 leading-relaxed mt-4 opacity-90">
+                                <h2 className="text-2xl md:text-4xl font-black mb-3 relative z-10 leading-tight">수능 사문 도표,<br/>이제 <span className="text-yellow-300">수학</span>으로 뚫습니다.</h2>
+                                <p className="text-indigo-100 text-xs md:text-sm font-medium relative z-10 leading-relaxed mt-4 opacity-90">
                                     발문의 의도 파악, 미지수 설정, 그리고 새롭게 추가된 '인구 부양비' 공식까지!<br/>
                                     아래 피드들을 통해 핵심 무기를 장착하세요.
                                 </p>
@@ -217,7 +217,7 @@
                                         content: (
                                             <div className="animate-fade-in text-slate-700 text-sm">
                                                 <p className="font-bold text-slate-800 mb-2">Q. 총부양비가 100이면?</p>
-                                                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100 font-bold text-indigo-700">
+                                                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100 font-bold text-indigo-700 leading-relaxed">
                                                     식: <Fraction num="(유소년+노년)" den="부양 인구" /> × 100 = 100 <br/><br/>
                                                     즉, <b>(유소년+노년) = 부양 인구</b> 라는 뜻입니다.<br/>
                                                     이는 <b>전체 인구에서 부양 인구가 차지하는 비율이 정확히 50%</b>라는 엄청난 힌트가 됩니다!
@@ -267,11 +267,11 @@
                                             <div className="animate-fade-in text-slate-700 text-sm">
                                                 <p className="font-bold text-rose-600 mb-3">🚨 "자녀 세대 대비 부모 세대의 비율이 1 미만이다."</p>
                                                 <ul className="bg-white p-4 rounded-lg border border-slate-200 space-y-3">
-                                                    <li className="flex items-center gap-2">
+                                                    <li className="flex items-center gap-2 flex-wrap">
                                                         <span className="font-bold text-slate-500">1. 수식화:</span> 
                                                         <Fraction num="부모 수" den="자녀 수" className="text-indigo-700" /> <span className="font-bold">&lt; 1</span>
                                                     </li>
-                                                    <li className="flex items-center gap-2">
+                                                    <li className="flex items-center gap-2 flex-wrap">
                                                         <span className="font-bold text-slate-500">2. 변형:</span>
                                                         <span className="font-bold bg-indigo-50 px-2 py-1 rounded">부모 수 &lt; 자녀 수</span> (양변에 자녀 수 곱하기)
                                                     </li>
@@ -358,8 +358,8 @@
                                 <div className="space-y-8">
                                     <div className="bg-slate-50 rounded-2xl p-5 md:p-6 border border-slate-200">
                                         <div className="flex items-center gap-3 mb-4">
-                                            <span className="bg-indigo-600 text-white text-xs font-bold px-2 py-1 rounded">유형 1</span>
-                                            <h3 className="font-bold text-lg text-slate-800">국가 간 계층 구조 비교 (상대비율 제시형)</h3>
+                                            <span className="bg-indigo-600 text-white text-xs font-bold px-2 py-1 rounded whitespace-nowrap">유형 1</span>
+                                            <h3 className="font-bold text-lg text-slate-800 leading-tight">국가 간 계층 구조 비교 (상대비율 제시형)</h3>
                                         </div>
                                         <div className="bg-white p-4 rounded-xl border border-slate-200 mb-4 shadow-sm">
                                             <p className="text-xs text-slate-400 font-bold mb-2">[발문 예시]</p>
@@ -371,17 +371,17 @@
                                         </div>
                                         <h4 className="font-bold text-indigo-700 text-sm mb-2">🚀 이렇게 시작하세요!</h4>
                                         <ul className="space-y-3 text-sm text-slate-700 font-medium">
-                                            <li className="flex gap-2"><span className="text-blue-500">1️⃣</span> <span>표의 비율 퍼센트 옆에 <b>무조건 미지수 a, b, c를 곱해서 적어둡니다.</b><br/>(예: 갑국 상층 20a, 을국 상층 10b)</span></li>
-                                            <li className="flex gap-2"><span className="text-blue-500">2️⃣</span> <span>문제 하단의 <b>'명수(인구)'를 직접적으로 비교하는 조건문</b>을 찾습니다.</span></li>
-                                            <li className="flex gap-2"><span className="text-blue-500">3️⃣</span> <span>"갑국 하층 인구(30a) = 을국 하층 인구(60b) × 2" 식을 세웁니다. <br/>👉 30a = 120b 👉 <span className="bg-yellow-100 px-1 font-bold text-rose-600">a = 4b</span> 도출!</span></li>
-                                            <li className="flex gap-2"><span className="text-blue-500">4️⃣</span> <span>이제 갑국의 모든 수치에 a 대신 4b를 넣어 'b'로 대통합합니다. 끝!</span></li>
+                                            <li className="flex gap-2 items-start"><span className="text-blue-500 mt-0.5">1️⃣</span> <span>표의 비율 퍼센트 옆에 <b>무조건 미지수 a, b, c를 곱해서 적어둡니다.</b><br/>(예: 갑국 상층 20a, 을국 상층 10b)</span></li>
+                                            <li className="flex gap-2 items-start"><span className="text-blue-500 mt-0.5">2️⃣</span> <span>문제 하단의 <b>'명수(인구)'를 직접적으로 비교하는 조건문</b>을 찾습니다.</span></li>
+                                            <li className="flex gap-2 items-start"><span className="text-blue-500 mt-0.5">3️⃣</span> <span>"갑국 하층 인구(30a) = 을국 하층 인구(60b) × 2" 식을 세웁니다. <br/>👉 30a = 120b 👉 <span className="bg-yellow-100 px-1 font-bold text-rose-600">a = 4b</span> 도출!</span></li>
+                                            <li className="flex gap-2 items-start"><span className="text-blue-500 mt-0.5">4️⃣</span> <span>이제 갑국의 모든 수치에 a 대신 4b를 넣어 'b'로 대통합합니다. 끝!</span></li>
                                         </ul>
                                     </div>
 
                                     <div className="bg-slate-50 rounded-2xl p-5 md:p-6 border border-slate-200">
                                         <div className="flex items-center gap-3 mb-4">
-                                            <span className="bg-rose-500 text-white text-xs font-bold px-2 py-1 rounded">유형 2</span>
-                                            <h3 className="font-bold text-lg text-slate-800">세대 간 계층 이동 (방향성 및 이동량 제시형)</h3>
+                                            <span className="bg-rose-500 text-white text-xs font-bold px-2 py-1 rounded whitespace-nowrap">유형 2</span>
+                                            <h3 className="font-bold text-lg text-slate-800 leading-tight">세대 간 계층 이동 (방향성 및 이동량 제시형)</h3>
                                         </div>
                                         <div className="bg-white p-4 rounded-xl border border-slate-200 mb-4 shadow-sm">
                                             <p className="text-xs text-slate-400 font-bold mb-2">[발문 예시]</p>
@@ -393,10 +393,10 @@
                                         </div>
                                         <h4 className="font-bold text-rose-700 text-sm mb-2">🚀 이렇게 시작하세요!</h4>
                                         <ul className="space-y-3 text-sm text-slate-700 font-medium">
-                                            <li className="flex gap-2"><span className="text-rose-500">1️⃣</span> <span>백지상태에서 <b>무조건 3x3 스도쿠 표(가로 자녀, 세로 부모)</b>를 크게 그립니다.</span></li>
-                                            <li className="flex gap-2"><span className="text-rose-500">2️⃣</span> <span>외곽의 <b>합계(주변분포)</b> 칸부터 채웁니다. 비율이 명확하지 않다면 상, 중, 하 비율에 맞게 미지수나 부등호(상&lt;중&lt;하)를 적어둡니다.</span></li>
-                                            <li className="flex gap-2"><span className="text-rose-500">3️⃣</span> <span>문제 조건 중 <b>"~에서 ~로 이동은 %이다"와 같이 핀포인트로 알려주는 절대 단서</b>를 찾아 해당 칸(셀)에 숫자를 확정합니다.</span></li>
-                                            <li className="flex gap-2"><span className="text-rose-500">4️⃣</span> <span><b>[상승 이동=좌하단 3칸 합], [하강 이동=우상단 3칸 합]</b> 공식을 이용하여 연립방정식을 풉니다. 바로 다음 탭 '스도쿠 훈련'에서 실습해보세요!</span></li>
+                                            <li className="flex gap-2 items-start"><span className="text-rose-500 mt-0.5">1️⃣</span> <span>백지상태에서 <b>무조건 3x3 스도쿠 표(가로 자녀, 세로 부모)</b>를 크게 그립니다.</span></li>
+                                            <li className="flex gap-2 items-start"><span className="text-rose-500 mt-0.5">2️⃣</span> <span>외곽의 <b>합계(주변분포)</b> 칸부터 채웁니다. 비율이 명확하지 않다면 상, 중, 하 비율에 맞게 미지수나 부등호(상&lt;중&lt;하)를 적어둡니다.</span></li>
+                                            <li className="flex gap-2 items-start"><span className="text-rose-500 mt-0.5">3️⃣</span> <span>문제 조건 중 <b>"~에서 ~로 이동은 %이다"와 같이 핀포인트로 알려주는 절대 단서</b>를 찾아 해당 칸(셀)에 숫자를 확정합니다.</span></li>
+                                            <li className="flex gap-2 items-start"><span className="text-rose-500 mt-0.5">4️⃣</span> <span><b>[상승 이동=좌하단 3칸 합], [하강 이동=우상단 3칸 합]</b> 공식을 이용하여 연립방정식을 풉니다. 바로 다음 탭 '스도쿠 훈련'에서 실습해보세요!</span></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -421,8 +421,8 @@
                     </main>
 
                     {/* 하단 네비게이션 */}
-                    <nav className="fixed bottom-0 w-full glass-panel z-50 rounded-t-3xl border-t border-slate-200/50 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
-                        <div className="max-w-3xl mx-auto px-1 md:px-4 py-2 pb-safe flex justify-between items-center">
+                    <nav className="fixed bottom-0 w-full glass-panel z-50 rounded-t-3xl border-t border-slate-200/50 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] pb-[env(safe-area-inset-bottom)]">
+                        <div className="max-w-4xl mx-auto px-1 md:px-4 py-2 flex justify-between items-center">
                             {navItems.map(item => (
                                 <button 
                                     key={item.id}
@@ -451,7 +451,7 @@
         }
 
         // ==========================================
-        // 스도쿠 훈련 앱 (기존 5단계 + 완벽 보존)
+        // 스도쿠 훈련 앱 
         // ==========================================
         function SudokuApp() {
             const [level, setLevel] = useState('Lv1. 기초');
@@ -571,14 +571,14 @@
 
             return (
                 <div className="animate-fade-in pb-10">
-                    <div className="bg-white rounded-[2rem] p-5 md:p-8 shadow-sm border border-slate-200 relative overflow-hidden">
-                        <h2 className="text-2xl font-black mb-2 text-slate-800">계층 스도쿠 훈련장</h2>
-                        <p className="text-slate-500 text-sm font-medium mb-6">모바일 최적화 및 5단계 난이도가 적용되었습니다.</p>
+                    <div className="bg-white rounded-[2rem] p-4 md:p-8 shadow-sm border border-slate-200 relative overflow-hidden">
+                        <h2 className="text-xl md:text-2xl font-black mb-2 text-slate-800">계층 스도쿠 훈련장</h2>
+                        <p className="text-slate-500 text-xs md:text-sm font-medium mb-6">모바일 최적화 및 5단계 난이도가 적용되었습니다.</p>
 
                         <div className="flex gap-2 mb-6 bg-slate-100 p-1.5 rounded-2xl w-full overflow-x-auto scrollbar-hide">
                             {levelsArray.map(lvl => (
                                 <button key={lvl} onClick={() => setLevel(lvl)}
-                                    className={`whitespace-nowrap px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${level === lvl ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-700 bg-white border border-slate-200'}`}>
+                                    className={`whitespace-nowrap px-3 md:px-4 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all ${level === lvl ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-700 bg-white border border-slate-200'}`}>
                                     {lvl}
                                 </button>
                             ))}
@@ -586,9 +586,9 @@
 
                         <div className="flex flex-col xl:flex-row gap-6">
                             <div className="flex-1 space-y-4">
-                                <div className="bg-slate-800 text-white p-5 md:p-6 rounded-2xl shadow-inner border border-slate-700">
-                                    <h3 className="font-bold text-yellow-400 mb-3 text-xs tracking-widest uppercase">Mission [{level}]</h3>
-                                    <ul className="space-y-2 text-sm font-medium text-slate-100 mb-4">
+                                <div className="bg-slate-800 text-white p-4 md:p-6 rounded-2xl shadow-inner border border-slate-700">
+                                    <h3 className="font-bold text-yellow-400 mb-3 text-[10px] md:text-xs tracking-widest uppercase">Mission [{level}]</h3>
+                                    <ul className="space-y-2 text-xs md:text-sm font-medium text-slate-100 mb-4">
                                         {currentPuzzle.conditions.map((cond, i) => (
                                             <li key={i} className="flex gap-2 items-start"><span className="bg-indigo-600 text-indigo-50 px-1.5 rounded text-[10px] mt-0.5 whitespace-nowrap">C{i+1}</span> <span>{cond}</span></li>
                                         ))}
@@ -597,21 +597,21 @@
                                     {!showSolution && (
                                         <div className="space-y-2 mb-4">
                                             {currentPuzzle.hints.map((hint, i) => (
-                                                hintsUsed > i && <div key={i} className="bg-slate-700/80 text-slate-200 p-3 rounded-lg text-sm animate-fade-in border border-slate-600/50">💡 {hint}</div>
+                                                hintsUsed > i && <div key={i} className="bg-slate-700/80 text-slate-200 p-3 rounded-lg text-xs md:text-sm animate-fade-in border border-slate-600/50">💡 {hint}</div>
                                             ))}
                                         </div>
                                     )}
                                     
                                     {!showSolution && !isAllCorrect && (
-                                        <div className="flex gap-2 mt-5">
+                                        <div className="flex flex-col sm:flex-row gap-2 mt-5">
                                             <button 
                                                 onClick={useHint} 
                                                 disabled={hintsUsed >= currentPuzzle.hints.length}
-                                                className={`flex-1 py-3 rounded-xl font-bold text-sm transition-colors border ${hintsUsed >= currentPuzzle.hints.length ? 'bg-white/5 text-slate-500 border-white/10 cursor-not-allowed' : 'bg-white/10 hover:bg-white/20 text-white border-white/20'}`}
+                                                className={`flex-1 py-3 rounded-xl font-bold text-xs md:text-sm transition-colors border ${hintsUsed >= currentPuzzle.hints.length ? 'bg-white/5 text-slate-500 border-white/10 cursor-not-allowed' : 'bg-white/10 hover:bg-white/20 text-white border-white/20'}`}
                                             >
                                                 {hintsUsed >= currentPuzzle.hints.length ? '모든 힌트 개방됨' : `힌트 열기 (${hintsUsed}/${currentPuzzle.hints.length})`}
                                             </button>
-                                            <button onClick={triggerShowSolution} className="flex-1 py-3 bg-rose-500/80 hover:bg-rose-500 rounded-xl font-bold text-sm transition-colors text-white">
+                                            <button onClick={triggerShowSolution} className="flex-1 py-3 bg-rose-500/80 hover:bg-rose-500 rounded-xl font-bold text-xs md:text-sm transition-colors text-white">
                                                 포기하고 풀이 보기
                                             </button>
                                         </div>
@@ -619,13 +619,13 @@
 
                                     {showSolution && (
                                         <div className="mt-4 p-4 bg-slate-900 rounded-xl border border-yellow-500/50 animate-fade-in">
-                                            <h4 className="font-bold text-yellow-400 mb-3 text-sm flex items-center gap-2">👨‍🏫 강사의 스텝별 풀이</h4>
-                                            <ul className="space-y-2.5 text-xs text-slate-300 leading-relaxed">
+                                            <h4 className="font-bold text-yellow-400 mb-3 text-xs md:text-sm flex items-center gap-2">👨‍🏫 강사의 스텝별 풀이</h4>
+                                            <ul className="space-y-2.5 text-[11px] md:text-xs text-slate-300 leading-relaxed">
                                                 {currentPuzzle.solutionSteps.map((step, idx) => (
                                                     <li key={idx} className="pb-2 border-b border-slate-700/50 last:border-0">{step}</li>
                                                 ))}
                                             </ul>
-                                            <button onClick={resetSudoku} className="mt-5 w-full py-2.5 bg-indigo-600 rounded-lg text-sm font-bold text-white hover:bg-indigo-500 transition-colors">
+                                            <button onClick={resetSudoku} className="mt-5 w-full py-2.5 bg-indigo-600 rounded-lg text-xs md:text-sm font-bold text-white hover:bg-indigo-500 transition-colors">
                                                 다시 풀어보기
                                             </button>
                                         </div>
@@ -633,62 +633,62 @@
                                 </div>
                             </div>
 
-                            <div className="flex-[1.5] relative bg-white p-1">
+                            <div className="flex-[1.5] relative bg-white p-1 max-w-full">
                                 {isAllCorrect && !showSolution && (
                                     <div className="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 rounded-2xl flex flex-col items-center justify-center animate-fade-in border border-emerald-200">
-                                        <div className="text-5xl mb-2 animate-bounce">🎉</div>
-                                        <h3 className="text-2xl font-black text-slate-800 mb-2">Perfect Clear!</h3>
-                                        <button onClick={resetSudoku} className="mt-4 bg-slate-800 text-white px-8 py-3 rounded-full font-black shadow-lg hover:bg-slate-700 transition-colors">
+                                        <div className="text-4xl md:text-5xl mb-2 animate-bounce">🎉</div>
+                                        <h3 className="text-xl md:text-2xl font-black text-slate-800 mb-2">Perfect Clear!</h3>
+                                        <button onClick={resetSudoku} className="mt-4 bg-slate-800 text-white px-6 md:px-8 py-2 md:py-3 rounded-full font-black text-sm md:text-base shadow-lg hover:bg-slate-700 transition-colors">
                                             다음 문제 도전
                                         </button>
                                     </div>
                                 )}
 
-                                <div className="overflow-x-auto pb-4 rounded-xl border border-slate-200 shadow-sm bg-slate-50">
-                                    <table className="w-full text-center border-collapse min-w-[500px]">
+                                <div className="overflow-x-auto pb-4 rounded-xl border border-slate-200 shadow-sm bg-slate-50 w-full">
+                                    <table className="w-full text-center border-collapse min-w-[450px] md:min-w-[500px]">
                                         <thead>
                                             <tr>
-                                                <th colSpan="2" rowSpan="2" className="bg-slate-200 border-b-2 border-r-2 border-slate-300 p-2 whitespace-nowrap font-black text-slate-600 text-sm">구분 (단위: 명)</th>
-                                                <th colSpan="3" className="bg-indigo-100 border-b-2 border-slate-300 p-2 font-black tracking-widest text-indigo-800 border-r-2 text-sm">자녀 세대</th>
-                                                <th rowSpan="2" className="bg-slate-700 border-b-2 border-slate-800 p-2 text-white font-black whitespace-nowrap text-sm">계<br/><span className="text-xs font-medium text-slate-300">(부모)</span></th>
+                                                <th colSpan="2" rowSpan="2" className="bg-slate-200 border-b-2 border-r-2 border-slate-300 p-2 whitespace-nowrap font-black text-slate-600 text-xs md:text-sm">구분 (단위: 명)</th>
+                                                <th colSpan="3" className="bg-indigo-100 border-b-2 border-slate-300 p-2 font-black tracking-widest text-indigo-800 border-r-2 text-xs md:text-sm">자녀 세대</th>
+                                                <th rowSpan="2" className="bg-slate-700 border-b-2 border-slate-800 p-2 text-white font-black whitespace-nowrap text-xs md:text-sm">계<br/><span className="text-[10px] md:text-xs font-medium text-slate-300">(부모)</span></th>
                                             </tr>
                                             <tr>
-                                                <th className="bg-indigo-50 border-b-2 border-r border-slate-300 p-2 text-indigo-700 font-bold text-sm">상층</th>
-                                                <th className="bg-indigo-50 border-b-2 border-r border-slate-300 p-2 text-indigo-700 font-bold text-sm">중층</th>
-                                                <th className="bg-indigo-50 border-b-2 border-r-2 border-slate-300 p-2 text-indigo-700 font-bold text-sm">하층</th>
+                                                <th className="bg-indigo-50 border-b-2 border-r border-slate-300 p-2 text-indigo-700 font-bold text-xs md:text-sm w-1/5">상층</th>
+                                                <th className="bg-indigo-50 border-b-2 border-r border-slate-300 p-2 text-indigo-700 font-bold text-xs md:text-sm w-1/5">중층</th>
+                                                <th className="bg-indigo-50 border-b-2 border-r-2 border-slate-300 p-2 text-indigo-700 font-bold text-xs md:text-sm w-1/5">하층</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <th rowSpan="3" className="bg-indigo-100 border-b-2 border-r-2 border-slate-300 p-2 font-black tracking-widest text-indigo-800 w-10 text-sm whitespace-nowrap" style={{writingMode: 'vertical-rl', textOrientation: 'upright'}}>부모 세대</th>
-                                                <th className="bg-indigo-50 border-b border-r border-slate-200 p-2 text-indigo-700 font-bold text-sm whitespace-nowrap">상층</th>
+                                                <th rowSpan="3" className="bg-indigo-100 border-b-2 border-r-2 border-slate-300 p-2 font-black tracking-widest text-indigo-800 w-8 md:w-10 text-xs md:text-sm whitespace-nowrap" style={{writingMode: 'vertical-rl', textOrientation: 'upright'}}>부모 세대</th>
+                                                <th className="bg-indigo-50 border-b border-r border-slate-200 p-2 text-indigo-700 font-bold text-xs md:text-sm whitespace-nowrap">상층</th>
                                                 <td className="p-1 border-b border-r border-slate-200"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('SS')}`} value={answers.SS} onChange={(e) => handleInputChange('SS', e.target.value)}/></td>
                                                 <td className="p-1 border-b border-r border-slate-200"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('SM')}`} value={answers.SM} onChange={(e) => handleInputChange('SM', e.target.value)}/></td>
                                                 <td className="p-1 border-b border-r-2 border-slate-300"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('SL')}`} value={answers.SL} onChange={(e) => handleInputChange('SL', e.target.value)}/></td>
-                                                <td className="p-2 border-b-2 border-slate-800 bg-slate-800 text-white font-black text-lg shadow-inner">{currentPuzzle.parents.S}</td>
+                                                <td className="p-2 border-b-2 border-slate-800 bg-slate-800 text-white font-black text-sm md:text-lg shadow-inner">{currentPuzzle.parents.S}</td>
                                             </tr>
                                             <tr>
-                                                <th className="bg-indigo-50 border-b border-r border-slate-200 p-2 text-indigo-700 font-bold text-sm whitespace-nowrap">중층</th>
+                                                <th className="bg-indigo-50 border-b border-r border-slate-200 p-2 text-indigo-700 font-bold text-xs md:text-sm whitespace-nowrap">중층</th>
                                                 <td className="p-1 border-b border-r border-slate-200"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('MS')}`} value={answers.MS} onChange={(e) => handleInputChange('MS', e.target.value)}/></td>
                                                 <td className="p-1 border-b border-r border-slate-200"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('MM')}`} value={answers.MM} onChange={(e) => handleInputChange('MM', e.target.value)}/></td>
                                                 <td className="p-1 border-b border-r-2 border-slate-300"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('ML')}`} value={answers.ML} onChange={(e) => handleInputChange('ML', e.target.value)}/></td>
-                                                <td className="p-2 border-b-2 border-slate-800 bg-slate-800 text-white font-black text-lg shadow-inner">{currentPuzzle.parents.M}</td>
+                                                <td className="p-2 border-b-2 border-slate-800 bg-slate-800 text-white font-black text-sm md:text-lg shadow-inner">{currentPuzzle.parents.M}</td>
                                             </tr>
                                             <tr>
-                                                <th className="bg-indigo-50 border-b-2 border-r border-slate-300 p-2 text-indigo-700 font-bold text-sm whitespace-nowrap">하층</th>
+                                                <th className="bg-indigo-50 border-b-2 border-r border-slate-300 p-2 text-indigo-700 font-bold text-xs md:text-sm whitespace-nowrap">하층</th>
                                                 <td className="p-1 border-b-2 border-r border-slate-200"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('LS')}`} value={answers.LS} onChange={(e) => handleInputChange('LS', e.target.value)}/></td>
                                                 <td className="p-1 border-b-2 border-r border-slate-200"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('LM')}`} value={answers.LM} onChange={(e) => handleInputChange('LM', e.target.value)}/></td>
                                                 <td className="p-1 border-b-2 border-r-2 border-slate-300"><input readOnly={showSolution} type="text" className={`table-input ${checkStatus('LL')}`} value={answers.LL} onChange={(e) => handleInputChange('LL', e.target.value)}/></td>
-                                                <td className="p-2 border-b-2 border-slate-800 bg-slate-800 text-white font-black text-lg shadow-inner">{currentPuzzle.parents.L}</td>
+                                                <td className="p-2 border-b-2 border-slate-800 bg-slate-800 text-white font-black text-sm md:text-lg shadow-inner">{currentPuzzle.parents.L}</td>
                                             </tr>
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <th colSpan="2" className="bg-slate-700 border-r-2 border-slate-800 p-2 text-white font-bold whitespace-nowrap text-sm">계 <span className="text-xs font-medium text-slate-300">(자녀)</span></th>
-                                                <td className="p-2 border-r border-slate-700 bg-slate-800 text-white font-black text-lg shadow-inner">{currentPuzzle.children.S}</td>
-                                                <td className="p-2 border-r border-slate-700 bg-slate-800 text-white font-black text-lg shadow-inner">{currentPuzzle.children.M}</td>
-                                                <td className="p-2 border-r-2 border-slate-800 bg-slate-800 text-white font-black text-lg shadow-inner">{currentPuzzle.children.L}</td>
-                                                <td className="p-2 bg-indigo-600 border-t-2 border-indigo-400 text-white font-black text-xl shadow-lg">100</td>
+                                                <th colSpan="2" className="bg-slate-700 border-r-2 border-slate-800 p-2 text-white font-bold whitespace-nowrap text-xs md:text-sm">계 <span className="text-[10px] md:text-xs font-medium text-slate-300">(자녀)</span></th>
+                                                <td className="p-2 border-r border-slate-700 bg-slate-800 text-white font-black text-sm md:text-lg shadow-inner">{currentPuzzle.children.S}</td>
+                                                <td className="p-2 border-r border-slate-700 bg-slate-800 text-white font-black text-sm md:text-lg shadow-inner">{currentPuzzle.children.M}</td>
+                                                <td className="p-2 border-r-2 border-slate-800 bg-slate-800 text-white font-black text-sm md:text-lg shadow-inner">{currentPuzzle.children.L}</td>
+                                                <td className="p-2 bg-indigo-600 border-t-2 border-indigo-400 text-white font-black text-base md:text-xl shadow-lg">100</td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -701,7 +701,7 @@
         }
 
         // ==========================================
-        // 복지제도 3단 벤다이어그램 계산기 (수기 + 슬라이더 UI 개선)
+        // 복지제도 3단 벤다이어그램 (슬라이더 UI 최적화)
         // ==========================================
         function WelfareVennApp() {
             const [valA, setValA] = useState(60); 
@@ -738,41 +738,43 @@
 
             return (
                 <div className="animate-fade-in pb-10 space-y-6">
-                    <div className="bg-white rounded-3xl p-5 md:p-8 shadow-sm border border-slate-200">
-                        <h2 className="text-2xl font-black mb-2 text-slate-800 flex items-center gap-2">
+                    <div className="bg-white rounded-3xl p-4 md:p-8 shadow-sm border border-slate-200">
+                        <h2 className="text-xl md:text-2xl font-black mb-2 text-slate-800 flex items-center gap-2">
                             <span className="text-indigo-500">⭕</span> 복지 벤다이어그램 해석기
                         </h2>
-                        <p className="text-slate-500 text-sm font-medium mb-6">
-                            슬라이더를 드래그하거나 직접 숫자를 입력하면 원의 크기가 실시간으로 연동됩니다. 하단의 '발문 번역기'를 꼭 체화하세요.
+                        <p className="text-slate-500 text-xs md:text-sm font-medium mb-6">
+                            슬라이더를 드래그하거나 숫자를 입력해 실시간 연동을 확인하세요.
                         </p>
 
-                        <div className="flex flex-col lg:flex-row gap-8 items-center">
-                            {/* 왼쪽: 향상된 UI의 조작 패널 */}
-                            <div className="w-full lg:w-[55%] space-y-6 bg-slate-50 p-5 rounded-2xl border border-slate-200 shadow-inner">
+                        <div className="flex flex-col lg:flex-row gap-6 md:gap-8 items-start">
+                            {/* 왼쪽: 슬라이더 조작 패널 */}
+                            <div className="w-full lg:w-[55%] space-y-6 bg-slate-50 p-4 md:p-5 rounded-2xl border border-slate-200 shadow-inner">
                                 
-                                {/* 전체 수급률 (A, B, C) */}
+                                {/* 전체 수급률 */}
                                 <div>
                                     <h3 className="font-bold text-slate-700 text-sm mb-3 border-b pb-2 flex items-center gap-2"><span className="text-lg">📊</span> 각 제도별 수급률 (%)</h3>
-                                    <div className="space-y-3">
-                                        <div className="flex flex-col gap-1">
-                                            <label className="text-[11px] font-bold text-blue-600">A (사회보험)</label>
+                                    <div className="space-y-4">
+                                        <div className="flex flex-col gap-1.5">
+                                            <label className="text-[11px] font-bold text-blue-600 flex justify-between">
+                                                A (사회보험) 
+                                            </label>
                                             <div className="flex items-center gap-3">
                                                 <input type="range" min="0" max="100" value={valA} onChange={(e)=>setValA(Number(e.target.value))} className="flex-1 text-blue-500" />
-                                                <input type="number" min="0" max="100" value={valA} onChange={(e)=>setValA(Number(e.target.value))} className="w-16 p-1.5 border rounded-lg text-center font-bold text-blue-900 bg-white" />
+                                                <input type="number" min="0" max="100" value={valA} onChange={(e)=>setValA(Number(e.target.value))} className="w-14 md:w-16 p-1 border rounded-lg text-center font-bold text-blue-900 bg-white text-sm" />
                                             </div>
                                         </div>
-                                        <div className="flex flex-col gap-1">
+                                        <div className="flex flex-col gap-1.5">
                                             <label className="text-[11px] font-bold text-rose-600">B (공공부조)</label>
                                             <div className="flex items-center gap-3">
                                                 <input type="range" min="0" max="100" value={valB} onChange={(e)=>setValB(Number(e.target.value))} className="flex-1 text-rose-500" />
-                                                <input type="number" min="0" max="100" value={valB} onChange={(e)=>setValB(Number(e.target.value))} className="w-16 p-1.5 border rounded-lg text-center font-bold text-rose-900 bg-white" />
+                                                <input type="number" min="0" max="100" value={valB} onChange={(e)=>setValB(Number(e.target.value))} className="w-14 md:w-16 p-1 border rounded-lg text-center font-bold text-rose-900 bg-white text-sm" />
                                             </div>
                                         </div>
-                                        <div className="flex flex-col gap-1">
+                                        <div className="flex flex-col gap-1.5">
                                             <label className="text-[11px] font-bold text-emerald-600">C (사회서비스)</label>
                                             <div className="flex items-center gap-3">
                                                 <input type="range" min="0" max="100" value={valC} onChange={(e)=>setValC(Number(e.target.value))} className="flex-1 text-emerald-500" />
-                                                <input type="number" min="0" max="100" value={valC} onChange={(e)=>setValC(Number(e.target.value))} className="w-16 p-1.5 border rounded-lg text-center font-bold text-emerald-900 bg-white" />
+                                                <input type="number" min="0" max="100" value={valC} onChange={(e)=>setValC(Number(e.target.value))} className="w-14 md:w-16 p-1 border rounded-lg text-center font-bold text-emerald-900 bg-white text-sm" />
                                             </div>
                                         </div>
                                     </div>
@@ -781,30 +783,30 @@
                                 {/* 중복 수급률 */}
                                 <div>
                                     <h3 className="font-bold text-slate-700 text-sm mb-3 border-b pb-2 flex items-center gap-2"><span className="text-lg">🔗</span> 중복 수급률 (%)</h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="flex flex-col gap-1 bg-indigo-50 p-2.5 rounded-xl border border-indigo-100">
-                                            <label className="text-[10px] font-bold text-indigo-800 flex justify-between">A∩B 중복</label>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                                        <div className="flex flex-col gap-1.5 bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+                                            <label className="text-[10px] font-bold text-indigo-800">A∩B 중복</label>
                                             <div className="flex items-center gap-2">
                                                 <input type="range" min="0" max={Math.min(valA, valB)} value={valAB} onChange={(e)=>setValAB(Number(e.target.value))} className="flex-1 text-indigo-500" />
                                                 <input type="number" min="0" max={Math.min(valA, valB)} value={valAB} onChange={(e)=>setValAB(Number(e.target.value))} className="w-12 p-1 border rounded text-center font-bold text-xs bg-white" />
                                             </div>
                                         </div>
-                                        <div className="flex flex-col gap-1 bg-indigo-50 p-2.5 rounded-xl border border-indigo-100">
-                                            <label className="text-[10px] font-bold text-indigo-800 flex justify-between">B∩C 중복</label>
+                                        <div className="flex flex-col gap-1.5 bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+                                            <label className="text-[10px] font-bold text-indigo-800">B∩C 중복</label>
                                             <div className="flex items-center gap-2">
                                                 <input type="range" min="0" max={Math.min(valB, valC)} value={valBC} onChange={(e)=>setValBC(Number(e.target.value))} className="flex-1 text-indigo-500" />
                                                 <input type="number" min="0" max={Math.min(valB, valC)} value={valBC} onChange={(e)=>setValBC(Number(e.target.value))} className="w-12 p-1 border rounded text-center font-bold text-xs bg-white" />
                                             </div>
                                         </div>
-                                        <div className="flex flex-col gap-1 bg-indigo-50 p-2.5 rounded-xl border border-indigo-100">
-                                            <label className="text-[10px] font-bold text-indigo-800 flex justify-between">C∩A 중복</label>
+                                        <div className="flex flex-col gap-1.5 bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+                                            <label className="text-[10px] font-bold text-indigo-800">C∩A 중복</label>
                                             <div className="flex items-center gap-2">
                                                 <input type="range" min="0" max={Math.min(valC, valA)} value={valCA} onChange={(e)=>setValCA(Number(e.target.value))} className="flex-1 text-indigo-500" />
                                                 <input type="number" min="0" max={Math.min(valC, valA)} value={valCA} onChange={(e)=>setValCA(Number(e.target.value))} className="w-12 p-1 border rounded text-center font-bold text-xs bg-white" />
                                             </div>
                                         </div>
-                                        <div className="flex flex-col gap-1 bg-purple-100 p-2.5 rounded-xl border border-purple-200">
-                                            <label className="text-[10px] font-bold text-purple-900 flex justify-between">A∩B∩C (모두 수급)</label>
+                                        <div className="flex flex-col gap-1.5 bg-purple-100 p-3 rounded-xl border border-purple-200">
+                                            <label className="text-[10px] font-bold text-purple-900">A∩B∩C (모두)</label>
                                             <div className="flex items-center gap-2">
                                                 <input type="range" min="0" max={Math.min(valAB, valBC, valCA)} value={valABC} onChange={(e)=>setValABC(Number(e.target.value))} className="flex-1 text-purple-600" />
                                                 <input type="number" min="0" max={Math.min(valAB, valBC, valCA)} value={valABC} onChange={(e)=>setValABC(Number(e.target.value))} className="w-12 p-1 border border-purple-300 rounded text-center font-black text-xs bg-white text-purple-900" />
@@ -814,85 +816,82 @@
                                 </div>
                             </div>
 
-                            {/* 오른쪽: 벤다이어그램 시각화 (기존과 동일) */}
-                            <div className="w-full lg:w-[45%] flex flex-col items-center justify-center p-4">
-                                <div className="relative w-64 h-64 mb-2 mt-4 md:mt-0">
+                            {/* 오른쪽: 벤다이어그램 시각화 */}
+                            <div className="w-full lg:w-[45%] flex flex-col items-center justify-center p-2 md:p-4 overflow-hidden">
+                                <div className="relative w-56 h-56 md:w-64 md:h-64 mt-4 md:mt-0 transform scale-90 md:scale-100">
                                     <div className="absolute inset-[-20px] border-2 border-dashed border-slate-300 rounded-xl bg-white shadow-sm -z-10 flex flex-col justify-between p-2">
                                         <span className="text-[10px] font-bold text-slate-400">전체 가구 (100%)</span>
                                         <span className="text-xs font-black text-rose-600 bg-rose-50 w-max px-2 rounded">사각지대(여집합): {blindSpot}%</span>
                                     </div>
 
                                     {/* Circle A */}
-                                    <div className="absolute w-36 h-36 rounded-full bg-blue-300/50 border-2 border-blue-500 top-0 left-2 venn-circle flex flex-col items-center justify-start pt-4" style={{transform: `scale(${scaleA})`, transformOrigin: 'center'}}>
+                                    <div className="absolute w-32 h-32 md:w-36 md:h-36 rounded-full bg-blue-300/50 border-2 border-blue-500 top-0 left-2 venn-circle flex flex-col items-center justify-start pt-3 md:pt-4" style={{transform: `scale(${scaleA})`, transformOrigin: 'center'}}>
                                         <span className="text-[10px] font-bold text-blue-900 leading-none">순수 A</span>
                                         <span className="font-black text-blue-950 text-sm leading-none mt-1">{onlyA}%</span>
                                     </div>
 
                                     {/* Circle B */}
-                                    <div className="absolute w-36 h-36 rounded-full bg-rose-300/50 border-2 border-rose-500 top-0 right-2 venn-circle flex flex-col items-center justify-start pt-4" style={{transform: `scale(${scaleB})`, transformOrigin: 'center'}}>
+                                    <div className="absolute w-32 h-32 md:w-36 md:h-36 rounded-full bg-rose-300/50 border-2 border-rose-500 top-0 right-2 venn-circle flex flex-col items-center justify-start pt-3 md:pt-4" style={{transform: `scale(${scaleB})`, transformOrigin: 'center'}}>
                                         <span className="text-[10px] font-bold text-rose-900 leading-none">순수 B</span>
                                         <span className="font-black text-rose-950 text-sm leading-none mt-1">{onlyB}%</span>
                                     </div>
 
                                     {/* Circle C */}
-                                    <div className="absolute w-36 h-36 rounded-full bg-emerald-300/50 border-2 border-emerald-500 bottom-0 left-14 venn-circle flex flex-col items-center justify-end pb-4" style={{transform: `scale(${scaleC})`, transformOrigin: 'center'}}>
+                                    <div className="absolute w-32 h-32 md:w-36 md:h-36 rounded-full bg-emerald-300/50 border-2 border-emerald-500 bottom-0 left-12 md:left-14 venn-circle flex flex-col items-center justify-end pb-3 md:pb-4" style={{transform: `scale(${scaleC})`, transformOrigin: 'center'}}>
                                         <span className="text-[10px] font-bold text-emerald-900 leading-none">순수 C</span>
                                         <span className="font-black text-emerald-950 text-sm leading-none mt-1">{onlyC}%</span>
                                     </div>
 
                                     {/* 교집합 값들 */}
-                                    <div className="absolute top-[50px] left-[110px] w-10 text-center z-10"><span className="text-[11px] font-black text-indigo-900 bg-white/70 px-1 rounded">{onlyAB}%</span></div>
-                                    <div className="absolute bottom-[70px] left-[60px] w-10 text-center z-10"><span className="text-[11px] font-black text-teal-900 bg-white/70 px-1 rounded">{onlyCA}%</span></div>
-                                    <div className="absolute bottom-[70px] right-[60px] w-10 text-center z-10"><span className="text-[11px] font-black text-orange-900 bg-white/70 px-1 rounded">{onlyBC}%</span></div>
-                                    <div className="absolute top-[100px] left-[110px] w-10 text-center z-20"><span className="text-sm font-black text-purple-900 bg-white/90 px-1 rounded-full shadow-sm">{valABC}%</span></div>
+                                    <div className="absolute top-[45px] md:top-[50px] left-[95px] md:left-[110px] w-10 text-center z-10"><span className="text-[10px] md:text-[11px] font-black text-indigo-900 bg-white/70 px-1 rounded">{onlyAB}%</span></div>
+                                    <div className="absolute bottom-[65px] md:bottom-[70px] left-[50px] md:left-[60px] w-10 text-center z-10"><span className="text-[10px] md:text-[11px] font-black text-teal-900 bg-white/70 px-1 rounded">{onlyCA}%</span></div>
+                                    <div className="absolute bottom-[65px] md:bottom-[70px] right-[50px] md:right-[60px] w-10 text-center z-10"><span className="text-[10px] md:text-[11px] font-black text-orange-900 bg-white/70 px-1 rounded">{onlyBC}%</span></div>
+                                    <div className="absolute top-[95px] md:top-[100px] left-[95px] md:left-[110px] w-10 text-center z-20"><span className="text-xs md:text-sm font-black text-purple-900 bg-white/90 px-1 rounded-full shadow-sm">{valABC}%</span></div>
                                 </div>
                             </div>
                         </div>
 
                         {/* 수능 단골 발문 번역기 대폭 확장 */}
-                        <div className="mt-8 bg-slate-800 p-6 rounded-2xl shadow-inner">
-                            <h4 className="font-black text-yellow-400 mb-4 text-lg flex items-center gap-2">
+                        <div className="mt-8 bg-slate-800 p-5 md:p-6 rounded-2xl shadow-inner">
+                            <h4 className="font-black text-yellow-400 mb-4 text-base md:text-lg flex items-center gap-2">
                                 👨‍🏫 수능 단골 발문 완벽 번역기
                             </h4>
-                            <div className="space-y-3 text-sm font-medium text-slate-200">
+                            <div className="space-y-3 text-xs md:text-sm font-medium text-slate-200">
                                 
-                                <div className="bg-slate-700/50 p-4 rounded-xl border border-slate-600/50">
+                                <div className="bg-slate-700/50 p-3 md:p-4 rounded-xl border border-slate-600/50">
                                     <p className="text-white font-bold mb-1">📌 1. "오직 하나의 혜택만을 받는 가구"</p>
-                                    <p className="text-indigo-300 text-xs mb-1">= 순수 A + 순수 B + 순수 C</p>
-                                    <p className="font-black text-lg text-yellow-300">{onlyA} + {onlyB} + {onlyC} = {onlyOneSum}%</p>
-                                    <div className="mt-2 text-xs bg-slate-900/50 p-2 rounded">
-                                        <b>[선지 판별]</b> "(가)가 (나)에 비해 8%p 더 높다" 👉 (가)의 값에서 (나)의 값을 뺐을 때 정확히 8이 나오는지 확인!
-                                    </div>
+                                    <p className="text-indigo-300 text-[10px] md:text-xs mb-1">= 순수 A + 순수 B + 순수 C</p>
+                                    <p className="font-black text-base md:text-lg text-yellow-300">{onlyA} + {onlyB} + {onlyC} = {onlyOneSum}%</p>
                                 </div>
                                 
-                                <div className="bg-slate-700/50 p-4 rounded-xl border border-slate-600/50">
+                                <div className="bg-slate-700/50 p-3 md:p-4 rounded-xl border border-slate-600/50">
                                     <p className="text-white font-bold mb-1">📌 2. "두 가지 이상의 제도의 수혜를 받는 가구"</p>
-                                    <p className="text-indigo-300 text-xs mb-1">= (순수 A∩B) + (순수 B∩C) + (순수 C∩A) + (A∩B∩C 모두)</p>
-                                    <p className="font-black text-lg text-yellow-300">{onlyAB} + {onlyBC} + {onlyCA} + {valABC} = {twoOrMoreSum}%</p>
+                                    <p className="text-indigo-300 text-[10px] md:text-xs mb-1">= (순수 A∩B) + (순수 B∩C) + (순수 C∩A) + (A∩B∩C 모두)</p>
+                                    <p className="font-black text-base md:text-lg text-yellow-300">{onlyAB} + {onlyBC} + {onlyCA} + {valABC} = {twoOrMoreSum}%</p>
                                 </div>
 
-                                <div className="bg-slate-700/50 p-4 rounded-xl border border-slate-600/50">
+                                <div className="bg-slate-700/50 p-3 md:p-4 rounded-xl border border-slate-600/50">
                                     <p className="text-white font-bold mb-1">📌 3. "A와 B'만' 중복 수혜 가구" vs "A와 B 중복 수혜 가구"</p>
-                                    <ul className="text-xs space-y-1 mt-2">
-                                        <li>👉 <span className="text-emerald-300 font-bold">"A와 B만"</span> = 3개 교집합을 뺀 <b>순수 교집합</b> = <b className="text-yellow-300">{onlyAB}%</b></li>
+                                    <ul className="text-[11px] md:text-xs space-y-1 mt-2">
+                                        <li>👉 <span className="text-emerald-300 font-bold">"A와 B만"</span> = 3개 교집합 뺀 <b>순수 교집합</b> = <b className="text-yellow-300">{onlyAB}%</b></li>
                                         <li>👉 <span className="text-emerald-300 font-bold">"A와 B"</span> = <b>전체 교집합</b> = (순수 교집합 + 3개 교집합) = <b className="text-yellow-300">{valAB}%</b></li>
                                     </ul>
                                 </div>
 
-                                <div className="bg-slate-700/50 p-4 rounded-xl border border-slate-600/50">
+                                <div className="bg-slate-700/50 p-3 md:p-4 rounded-xl border border-slate-600/50">
                                     <p className="text-white font-bold mb-1">📌 4. "A 수급 가구 중 B도 수급하는 가구의 비율"</p>
-                                    <p className="text-indigo-300 text-xs mb-1">= (A와 B 교집합) ÷ (A 전체) × 100 <span className="text-slate-400">-&gt; [조건부 확률]</span></p>
+                                    <p className="text-indigo-300 text-[10px] md:text-xs mb-1">= (A와 B 교집합) ÷ (A 전체) × 100 <span className="text-slate-400">-&gt; [조건부 확률]</span></p>
                                     <div className="flex items-center gap-2 mt-1">
                                         <Fraction num={valAB} den={valA} className="text-yellow-300" /> <span className="text-yellow-300 font-black">× 100 = {valA === 0 ? 0 : ((valAB / valA) * 100).toFixed(1)}%</span>
                                     </div>
-                                    <div className="mt-2 text-xs bg-slate-900/50 p-2 rounded text-rose-300">
-                                        <b>주의:</b> 이 비율은 전체 인구 대비 퍼센트가 아닙니다! 분모가 100이 아닌 'A 가구 수({valA})'로 바뀌었음에 매우 유의하세요.
+                                    <div className="mt-2 text-[10px] md:text-xs bg-slate-900/50 p-2 rounded text-rose-300 leading-relaxed">
+                                        <b>주의:</b> 분모가 100이 아닌 'A 가구 수({valA})'로 바뀌었음에 매우 유의하세요.
                                     </div>
                                 </div>
 
-                                <div className="bg-slate-700/50 p-4 rounded-xl border border-slate-600/50">
-                                    <p className="text-white font-bold mb-1">📌 5. "적어도 하나의 제도를 수급하는 가구" & "어떤 제도도 수급받지 못하는 가구"</p>
-                                    <ul className="text-xs space-y-1 mt-2">
+                                <div className="bg-slate-700/50 p-3 md:p-4 rounded-xl border border-slate-600/50">
+                                    <p className="text-white font-bold mb-1">📌 5. "적어도 하나의 제도 수급" & "어떤 제도도 수급받지 못하는 가구"</p>
+                                    <ul className="text-[11px] md:text-xs space-y-1 mt-2">
                                         <li>👉 <span className="text-emerald-300 font-bold">적어도 하나(합집합)</span> = 100 - 사각지대 = <b className="text-yellow-300">{unionAll}%</b></li>
                                         <li>👉 <span className="text-emerald-300 font-bold">어떤 것도 X(사각지대)</span> = 100 - 합집합 = <b className="text-yellow-300">{blindSpot}%</b></li>
                                     </ul>
@@ -906,7 +905,7 @@
         }
 
         // ==========================================
-        // 탭 5: 가중평균 시소 시뮬레이터
+        // 탭 5: 가중평균 시소 시뮬레이터 (반응형 최적화)
         // ==========================================
         function SeesawApp() {
             const [sliderA, setSliderA] = useState(15);
@@ -937,116 +936,116 @@
 
             return (
                 <div className="animate-fade-in pb-10">
-                    <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 relative overflow-hidden">
+                    <div className="bg-white rounded-3xl p-5 md:p-8 shadow-sm border border-slate-200 relative overflow-hidden">
                         <div className="flex justify-between items-start mb-6">
                             <div>
-                                <h2 className="text-2xl font-black mb-1 text-slate-800">가중평균 시소 시뮬레이터</h2>
-                                <p className="text-slate-500 text-sm font-medium">받침점(전체평균)을 조작하여 숨겨진 <b>인구수 비례</b>와 <b>실제 수급자 수 비례</b>를 찾아보세요.</p>
+                                <h2 className="text-xl md:text-2xl font-black mb-1 text-slate-800">가중평균 시소 시뮬레이터</h2>
+                                <p className="text-slate-500 text-xs md:text-sm font-medium">받침점(전체평균)을 조작하여 숨겨진 <b>인구수 비례</b>를 찾으세요.</p>
                             </div>
                             <span className="bg-rose-100 text-rose-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-rose-200">Pro</span>
                         </div>
 
-                        <div className="bg-slate-50 p-6 md:p-10 rounded-3xl border border-slate-200 mb-8 relative">
-                            <div className="flex justify-between items-end mb-20 text-center px-1">
-                                <div className="bg-white px-3 py-3 rounded-2xl shadow-sm border border-blue-100 min-w-[70px]">
-                                    <div className="text-[9px] font-bold text-slate-400 mb-1">A지역 수급률</div>
-                                    <div className="text-xl md:text-2xl font-black text-blue-600">{sliderA}%</div>
+                        <div className="bg-slate-50 p-4 md:p-10 rounded-3xl border border-slate-200 mb-8 relative">
+                            <div className="flex justify-between items-end mb-16 md:mb-20 text-center px-1">
+                                <div className="bg-white px-2 py-2 md:px-3 md:py-3 rounded-2xl shadow-sm border border-blue-100 min-w-[60px] md:min-w-[70px]">
+                                    <div className="text-[8px] md:text-[9px] font-bold text-slate-400 mb-1">A지역 수급률</div>
+                                    <div className="text-lg md:text-2xl font-black text-blue-600">{sliderA}%</div>
                                 </div>
-                                <div className="bg-white px-5 py-4 rounded-2xl shadow-md border-2 border-emerald-400 transform scale-110 z-10 relative mx-2">
-                                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-emerald-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full whitespace-nowrap shadow-sm">전체 평균</div>
-                                    <div className="text-3xl font-black text-emerald-500">{sliderTotal}%</div>
+                                <div className="bg-white px-4 py-3 md:px-5 md:py-4 rounded-2xl shadow-md border-2 border-emerald-400 transform scale-110 z-10 relative mx-1 md:mx-2">
+                                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-emerald-500 text-white text-[9px] md:text-[10px] font-black px-2 py-0.5 rounded-full whitespace-nowrap shadow-sm">전체 평균</div>
+                                    <div className="text-2xl md:text-3xl font-black text-emerald-500">{sliderTotal}%</div>
                                 </div>
-                                <div className="bg-white px-3 py-3 rounded-2xl shadow-sm border border-rose-100 min-w-[70px]">
-                                    <div className="text-[9px] font-bold text-slate-400 mb-1">B지역 수급률</div>
-                                    <div className="text-xl md:text-2xl font-black text-rose-600">{sliderB}%</div>
+                                <div className="bg-white px-2 py-2 md:px-3 md:py-3 rounded-2xl shadow-sm border border-rose-100 min-w-[60px] md:min-w-[70px]">
+                                    <div className="text-[8px] md:text-[9px] font-bold text-slate-400 mb-1">B지역 수급률</div>
+                                    <div className="text-lg md:text-2xl font-black text-rose-600">{sliderB}%</div>
                                 </div>
                             </div>
 
-                            <div className="relative h-44 flex items-end justify-center mb-8 px-4">
-                                <div className="absolute top-0 w-full px-4 flex text-[11px] font-black text-slate-500">
-                                    <div className="border-b-2 border-dashed border-blue-300 relative flex justify-center pb-2" style={{ width: `${fulcrumPos}%` }}>
+                            <div className="relative h-32 md:h-44 flex items-end justify-center mb-8 px-2 md:px-4">
+                                <div className="absolute top-0 w-full px-2 md:px-4 flex text-[10px] md:text-[11px] font-black text-slate-500">
+                                    <div className="border-b-2 border-dashed border-blue-300 relative flex justify-center pb-1 md:pb-2" style={{ width: `${fulcrumPos}%` }}>
                                         거리: {distA}
                                     </div>
-                                    <div className="border-b-2 border-dashed border-rose-300 relative flex justify-center pb-2" style={{ width: `${100 - fulcrumPos}%` }}>
+                                    <div className="border-b-2 border-dashed border-rose-300 relative flex justify-center pb-1 md:pb-2" style={{ width: `${100 - fulcrumPos}%` }}>
                                         거리: {distB}
                                     </div>
                                 </div>
 
                                 <div className="w-full relative z-10 transition-transform duration-300 ease-out origin-bottom" style={{ transform: `rotate(${tiltAngle}deg)` }}>
-                                    <div className="absolute left-0 bottom-4 flex flex-col items-center z-20" style={{ transform: `scale(${Math.max(0.7, popRatioA / 50)})`, transformOrigin: 'bottom left', transition: 'transform 0.3s ease-out' }}>
-                                        <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-black px-4 py-3 rounded-xl shadow-lg border border-blue-400 text-center min-w-[70px]">
-                                            <span className="text-[9px] opacity-80 block mb-0.5">인구(무게) 비</span>
-                                            <span className="text-lg">{popRatioA}</span>
+                                    <div className="absolute left-0 bottom-3 md:bottom-4 flex flex-col items-center z-20" style={{ transform: `scale(${Math.max(0.6, popRatioA / 50)})`, transformOrigin: 'bottom left', transition: 'transform 0.3s ease-out' }}>
+                                        <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-black px-3 py-2 md:px-4 md:py-3 rounded-xl shadow-lg border border-blue-400 text-center min-w-[60px] md:min-w-[70px]">
+                                            <span className="text-[8px] md:text-[9px] opacity-80 block mb-0.5">인구(무게) 비</span>
+                                            <span className="text-base md:text-lg">{popRatioA}</span>
                                         </div>
                                     </div>
-                                    <div className="absolute right-0 bottom-4 flex flex-col items-center z-20" style={{ transform: `scale(${Math.max(0.7, popRatioB / 50)})`, transformOrigin: 'bottom right', transition: 'transform 0.3s ease-out' }}>
-                                        <div className="bg-gradient-to-br from-rose-400 to-rose-500 text-white font-black px-4 py-3 rounded-xl shadow-lg border border-rose-400 text-center min-w-[70px]">
-                                            <span className="text-[9px] opacity-80 block mb-0.5">인구(무게) 비</span>
-                                            <span className="text-lg">{popRatioB}</span>
+                                    <div className="absolute right-0 bottom-3 md:bottom-4 flex flex-col items-center z-20" style={{ transform: `scale(${Math.max(0.6, popRatioB / 50)})`, transformOrigin: 'bottom right', transition: 'transform 0.3s ease-out' }}>
+                                        <div className="bg-gradient-to-br from-rose-400 to-rose-500 text-white font-black px-3 py-2 md:px-4 md:py-3 rounded-xl shadow-lg border border-rose-400 text-center min-w-[60px] md:min-w-[70px]">
+                                            <span className="text-[8px] md:text-[9px] opacity-80 block mb-0.5">인구(무게) 비</span>
+                                            <span className="text-base md:text-lg">{popRatioB}</span>
                                         </div>
                                     </div>
 
-                                    <div className="w-full h-4 bg-slate-300 rounded-full shadow-inner border border-white"></div>
+                                    <div className="w-full h-3 md:h-4 bg-slate-300 rounded-full shadow-inner border border-white"></div>
                                 </div>
 
-                                <div className="absolute bottom-[-20px] z-30 transition-all duration-300 ease-out w-full px-4">
+                                <div className="absolute bottom-[-16px] md:bottom-[-20px] z-30 transition-all duration-300 ease-out w-full px-2 md:px-4">
                                     <div className="relative w-full h-full">
                                         <div className="absolute transition-all duration-300 ease-out" style={{ left: `${fulcrumPos}%`, transform: 'translateX(-50%)' }}>
-                                            <div className="w-0 h-0 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent border-b-[30px] border-b-emerald-500 filter drop-shadow-md"></div>
+                                            <div className="w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-b-[24px] border-b-emerald-500 md:border-l-[20px] md:border-r-[20px] md:border-b-[30px] filter drop-shadow-md"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="mt-14 bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 relative">
-                                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md whitespace-nowrap">
+                            <div className="mt-10 md:mt-14 bg-white p-3 md:p-5 rounded-2xl shadow-sm border border-slate-100 relative">
+                                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white text-[9px] md:text-[10px] font-bold px-3 py-1 rounded-full shadow-md whitespace-nowrap">
                                     가운데 원을 좌우로 드래그
                                 </div>
                                 <input 
                                     type="range" min={sliderA + 1} max={sliderB - 1} value={sliderTotal} 
                                     onChange={(e) => setSliderTotal(Number(e.target.value))}
-                                    className="w-full h-3 bg-slate-200 rounded-full appearance-none cursor-pointer mt-2 text-slate-600"
+                                    className="w-full h-3 bg-slate-200 rounded-full appearance-none cursor-pointer mt-2"
                                 />
                             </div>
                         </div>
 
-                        <div className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-lg animate-fade-in mt-8">
-                            <div className="bg-slate-900 px-5 py-3 border-b border-slate-700 flex justify-between items-center">
-                                <h4 className="font-bold text-white text-sm flex items-center gap-2">
+                        <div className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-lg animate-fade-in mt-6 md:mt-8">
+                            <div className="bg-slate-900 px-4 py-3 md:px-5 border-b border-slate-700 flex justify-between items-center">
+                                <h4 className="font-bold text-white text-xs md:text-sm flex items-center gap-2">
                                     <span className="bg-emerald-500 w-2 h-2 rounded-full animate-pulse"></span> 실시간 자동 도출 데이터
                                 </h4>
                                 <span className="text-slate-400 text-[10px] md:text-xs font-medium">수능 선지 판별용</span>
                             </div>
                             
-                            <div className="p-5 space-y-4">
-                                <div className="flex justify-between items-center bg-slate-700/30 p-3 rounded-xl border border-slate-600/50">
-                                    <div className="flex items-center gap-2 text-slate-300 text-sm font-bold">
-                                        <span className="text-lg">📏</span> 거리의 비 (A : B)
+                            <div className="p-4 md:p-5 space-y-3 md:space-y-4">
+                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-700/30 p-3 rounded-xl border border-slate-600/50 gap-2">
+                                    <div className="flex items-center gap-2 text-slate-300 text-xs md:text-sm font-bold">
+                                        <span className="text-base md:text-lg">📏</span> 거리의 비 (A : B)
                                     </div>
-                                    <div className="font-black text-white text-lg">
+                                    <div className="font-black text-white text-base md:text-lg w-full sm:w-auto text-right">
                                         <span className="text-blue-400">{distA}</span> : <span className="text-rose-400">{distB}</span>
                                     </div>
                                 </div>
                                 
-                                <div className="flex justify-between items-center bg-indigo-900/40 p-3 rounded-xl border border-indigo-700/50">
-                                    <div className="flex items-center gap-2 text-indigo-200 text-sm font-bold">
-                                        <span className="text-lg">👥</span> <span className="underline decoration-indigo-400">인구 수</span>의 비 (A : B)
+                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-indigo-900/40 p-3 rounded-xl border border-indigo-700/50 gap-2">
+                                    <div className="flex items-center gap-2 text-indigo-200 text-xs md:text-sm font-bold">
+                                        <span className="text-base md:text-lg">👥</span> <span className="underline decoration-indigo-400">인구 수</span>의 비 (A : B)
                                     </div>
-                                    <div className="font-black text-white text-lg text-right">
+                                    <div className="font-black text-white text-base md:text-lg text-right w-full sm:w-auto">
                                         <span className="text-blue-400">{distB}</span> : <span className="text-rose-400">{distA}</span><br/>
-                                        <span className="text-[10px] text-slate-400 font-normal bg-slate-800 px-2 py-0.5 rounded-full inline-block mt-1">거리비의 역수</span>
+                                        <span className="text-[9px] md:text-[10px] text-slate-400 font-normal bg-slate-800 px-2 py-0.5 rounded-full inline-block mt-1">거리비의 역수</span>
                                     </div>
                                 </div>
 
-                                <div className="flex justify-between items-start md:items-center bg-emerald-900/30 p-4 rounded-xl border border-emerald-700/50 flex-col md:flex-row gap-3">
-                                    <div className="flex items-center gap-2 text-emerald-200 text-sm font-bold">
-                                        <span className="text-xl">💰</span> 실제 <span className="text-white bg-emerald-600 px-1.5 rounded mx-1">수급자 수</span>의 비 (A : B)
+                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-emerald-900/30 p-3 md:p-4 rounded-xl border border-emerald-700/50 gap-2">
+                                    <div className="flex items-center gap-2 text-emerald-200 text-xs md:text-sm font-bold">
+                                        <span className="text-lg md:text-xl">💰</span> 실제 <span className="text-white bg-emerald-600 px-1.5 rounded mx-1">수급자 수</span>의 비 (A : B)
                                     </div>
-                                    <div className="text-right w-full md:w-auto">
-                                        <div className="font-black text-white text-xl">
+                                    <div className="text-right w-full sm:w-auto">
+                                        <div className="font-black text-white text-lg md:text-xl">
                                             <span className="text-blue-400">{recRatioA}</span> : <span className="text-rose-400">{recRatioB}</span>
                                         </div>
-                                        <div className="text-[10px] text-emerald-300 font-bold mt-1">
+                                        <div className="text-[9px] md:text-[10px] text-emerald-300 font-bold mt-1">
                                             계산: (인구 비례 × 각 지역 수급률)
                                         </div>
                                     </div>
